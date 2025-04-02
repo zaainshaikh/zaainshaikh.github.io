@@ -164,11 +164,19 @@
         });
 
         // Saturn's Rings
-        const ringGeometry = new THREE.RingGeometry(2.5, 4, 32);
-        const ringMaterial = new THREE.MeshStandardMaterial({ color: 0xe6b800, side: THREE.DoubleSide });
-        const rings = new THREE.Mesh(ringGeometry, ringMaterial);
-        rings.rotation.x = Math.PI / 2;
-        planetMeshes[6].mesh.add(rings);
+        const ringTexture = new THREE.TextureLoader().load("textures/saturn_ring.png");
+
+const ringGeometry = new THREE.RingGeometry(2.5, 4, 64); // Increase segments for smoother look
+const ringMaterial = new THREE.MeshStandardMaterial({ 
+    map: ringTexture,
+    transparent: true,  // Enable transparency if the texture has a transparent background
+    side: THREE.DoubleSide 
+});
+
+const rings = new THREE.Mesh(ringGeometry, ringMaterial);
+rings.rotation.x = Math.PI / 2;
+planetMeshes[6].mesh.add(rings);
+
 
         // Jupiter's Great Red Spot
         const spotGeometry = new THREE.SphereGeometry(0.3, 16, 16);
