@@ -40,9 +40,14 @@
     cursor: pointer;
     transition: transform 0.2s ease, color 0.2s ease; /* Smooth animation */
     padding: 5px;
+    width: 30px; /* Set width */
+    height: 30px; /* Set height */
     background: transparent;
     border: none;
-    border-radius: 5px;
+    border-radius: 50%; /* Make it circular */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the "X" inside the button */
 }
 
 #closeBtn:hover {
@@ -50,6 +55,7 @@
     transform: scale(1.2); /* Slight grow effect */
     background: rgba(255, 255, 255, 0.2); /* Light background on hover */
 }
+
 
 
     </style>
