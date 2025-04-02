@@ -150,14 +150,21 @@
         ];
 
         // Planet Meshes and Circular Orbits
-        const planetMeshes = [];
-        planets.forEach((planet) => {
-            const geometry = new THREE.SphereGeometry(planet.radius, 32, 32);
-            const material = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
-                emissiveIntensity: planet.name === "Sun" ? 2 : 0
-            });
+ planetMeshes.forEach((planet) => {
+    const { mesh, planet: data } = planet;
+
+    if (data.distance > 0) {
+        // Update angle for circular orbit
+        planet.angle += data.speed;
+        mesh.position.x = Math.cos(planet.angle) * data.distance;
+        mesh.position.z = Math.sin(planet.angle) * data.distance;
+    }
+    
+    // Maintain the planet's vertical axis and rotation
+    mesh.rotation.y += data.rotation;  // Self-rotation on the Y-axis
+    mesh.rotation.x = 0;  // Ensures no tilt around the X-axis
+    mesh.rotation.z = 0;  // Ensures no tilt around the Z-axis
+});
 
             loader.load(
     `textures/${planet.texture}`,
