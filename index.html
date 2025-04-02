@@ -1,37 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive 3D Solar System</title>
+    <title>3D Solar System Simulator</title>
     <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+        }
     </style>
 </head>
+
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
+
     <script>
-        let scene, camera, renderer;
-        function init() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
-            
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambientLight);
-            
-            animate();
-        }
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 50, 100);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        const sunLight = new THREE.PointLight(0xffffff, 3, 1000);
+        sunLight.position.set(0, 0, 0);
+        scene.add(sunLight);
+
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambientLight);
+
+        const loader = new THREE.GLTFLoader();
+        const planetMeshes = [];
+
+        const planets = [
+            { name: "Sun", model: "sun.glb", distance: 0, speed: 0, rotation: 0.01 },
+            { name: "Mercury", model: "mercury.glb", distance: 10, speed: 0.04, rotation: 0.003 },
+            { name: "Venus", model: "venus.glb", distance: 15, speed: 0.015, rotation: 0.0004 },
+            { name: "Earth", model: "earth.glb", distance: 20, speed: 0.01, rotation: 0.05 },
+            { name: "Mars", model: "mars.glb", distance: 25, speed: 0.008, rotation: 0.048 },
+            { name: "Jupiter", model: "jupiter.glb", distance: 35, speed: 0.004, rotation: 0.1 },
+            { name: "Saturn", model: "saturn.glb", distance: 45, speed: 0.003, rotation: 0.09 },
+            { name: "Uranus", model: "uranus.glb", distance: 55, speed: 0.002, rotation: 0.06 },
+            { name: "Neptune", model: "neptune.glb", distance: 65, speed: 0.0015, rotation: 0.07 }
+        ];
+
+        planets.forEach((planet) => {
+            loader.load(`models/${planet.model}`, (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(5, 5, 5);
+                model.position.x = planet.distance;
+                scene.add(model);
+                planetMeshes.push({ model, planet, angle: 0 });
+            });
+        });
+
         function animate() {
             requestAnimationFrame(animate);
+            planetMeshes.forEach(({ model, planet }) => {
+                if (planet.distance > 0) {
+                    model.position.x = Math.cos(planet.angle) * planet.distance;
+                    model.position.z = Math.sin(planet.angle) * planet.distance;
+                    planet.angle += planet.speed;
+                }
+                model.rotation.y += planet.rotation;
+            });
+            controls.update();
             renderer.render(scene, camera);
         }
-        window.onload = init;
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
+
 </html>
