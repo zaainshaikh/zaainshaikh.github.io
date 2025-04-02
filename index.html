@@ -34,20 +34,11 @@
             color: #ff4444;
         }
     </style>
-</head>
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js';
+        import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/loaders/GLTFLoader.js';
 
-<body>
-    <div id="infoPanel">
-        <span id="closeBtn">X</span>
-        <h2 id="planetName"></h2>
-        <p id="planetInfo"></p>
-    </div>
-
-    <script src="three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
-
-    <script>
         // Scene Setup
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
@@ -55,10 +46,11 @@
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
         document.body.appendChild(renderer.domElement);
 
         // Controls
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
 
@@ -71,7 +63,7 @@
         scene.add(ambientLight);
 
         // GLTF Loader
-        const loader = new THREE.GLTFLoader();
+        const loader = new GLTFLoader();
         const planetModels = {};
 
         // Load models
@@ -113,6 +105,14 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
+</head>
+
+<body>
+    <div id="infoPanel">
+        <span id="closeBtn">X</span>
+        <h2 id="planetName"></h2>
+        <p id="planetInfo"></p>
+    </div>
 </body>
 
 </html>
