@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FalakZoom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -14,25 +15,30 @@
         }
 
         #infoPanel {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            display: none;
-            max-width: 350px;
-            font-size: 14px;
-        }
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    display: none;
+    max-width: 350px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+}
 
-        #closeBtn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            cursor: pointer;
-            color: #ff4444;
-        }
+#closeBtn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    color: #ff4444;
+    font-weight: bold;
+}
+
     </style>
 </head>
 
@@ -258,7 +264,7 @@ planetMeshes[6].mesh.add(rings);
                 const planet = intersects[0].object;
                 const data = planetMeshes.find(p => p.mesh === planet).planet;
                 planetName.textContent = data.name;
-                planetInfo.textContent = data.info;
+                planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
                 infoPanel.style.display = 'block';
             }
         });
