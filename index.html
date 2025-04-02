@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FalakZoom</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            font-family: Arial, sans-serif;
+        }
+
+        #infoPanel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            max-width: 350px;
+            font-size: 14px;
+        }
+
+        #closeBtn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            color: #ff4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="infoPanel">
+        <span id="closeBtn">X</span>
+        <h2 id="planetName"></h2>
+        <p id="planetInfo"></p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
+
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 50, 100);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        const sunLight = new THREE.PointLight(0xffffff, 3, 1000);
+        sunLight.position.set(0, 0, 0);
+        scene.add(sunLight);
+
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambientLight);
+
+        const gltfLoader = new THREE.GLTFLoader();
+
+        const planets = [
+            { name: "Sun", radius: 5, distance: 0, speed: 0, tilt: 0, rotation: 0.01 },
+            { name: "Mercury", radius: 0.5, distance: 10, speed: 0.04, tilt: 0.034, rotation: 0.003 },
+            { name: "Venus", radius: 0.8, distance: 15, speed: 0.015, tilt: 177.4, rotation: 0.0004 },
+            { name: "Earth", radius: 1, distance: 20, speed: 0.01, tilt: 23.5, rotation: 0.05 },
+            { name: "Mars", radius: 0.7, distance: 25, speed: 0.008, tilt: 25.2, rotation: 0.048 },
+            { name: "Jupiter", radius: 2.5, distance: 35, speed: 0.004, tilt: 3.1, rotation: 0.1 },
+            { name: "Saturn", radius: 2, distance: 45, speed: 0.003, tilt: 26.7, rotation: 0.09 },
+            { name: "Uranus", radius: 1.5, distance: 55, speed: 0.002, tilt: 97.8, rotation: 0.06 },
+            { name: "Neptune", radius: 1.5, distance: 65, speed: 0.0015, tilt: 28.3, rotation: 0.07 }
+        ];
+
+        const planetMeshes = [];
+        planets.forEach((planet) => {
+            gltfLoader.load(`https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME/main/models/${planet.name.toLowerCase()}.glb`, (gltf) => {
+                const model = gltf.scene;
+                model.scale.set(planet.radius, planet.radius, planet.radius);
+                model.position.x = planet.distance;
+                model.rotation.x = planet.tilt * Math.PI / 180;
+                scene.add(model);
+
+                planetMeshes.push({ mesh: model, planet, angle: 0 });
+            }, undefined, (error) => {
+                console.error(`Error loading ${planet.name} model:`, error);
+            });
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            planetMeshes.forEach(({ mesh, planet }) => {
+                if (planet.distance > 0) {
+                    planet.angle += planet.speed;
+                    mesh.position.x = Math.cos(planet.angle) * planet.distance;
+                    mesh.position.z = Math.sin(planet.angle) * planet.distance;
+                }
+                mesh.rotation.y += planet.rotation;
+            });
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
