@@ -171,7 +171,7 @@
 
             // Circular Orbit Path
             if (planet.distance > 0) {
-                const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 64);
+                const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 128);
                 const orbitMaterial = new THREE.MeshBasicMaterial({ color: 0x333333, side: THREE.DoubleSide });
                 const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
                 orbit.rotation.x = Math.PI / 2;
