@@ -318,6 +318,43 @@ planetMeshes[6].mesh.add(rings);
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
+
+<script>
+// Place this code inside the <script> tag, before the closing </body> tag
+
+function createAsteroidBelt() {
+    const asteroidBelt = new THREE.Group();
+    const asteroidCount = 200; // Adjust for density
+
+    for (let i = 0; i < asteroidCount; i++) {
+        // Use IcosahedronGeometry for a more natural rock-like shape
+        const asteroidGeometry = new THREE.IcosahedronGeometry(Math.random() * 0.5 + 0.2, 1); 
+        const asteroidMaterial = new THREE.MeshStandardMaterial({ color: 0x808080 });
+
+        const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
+
+        // Random positioning in a ring-like shape
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 25 + Math.random() * 5; // Belt radius
+        asteroid.position.set(
+            Math.cos(angle) * distance,
+            (Math.random() - 0.5) * 2, // Slight vertical variation
+            Math.sin(angle) * distance
+        );
+
+        // Random rotation for a more organic look
+        asteroid.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+
+        asteroidBelt.add(asteroid);
+    }
+
+    scene.add(asteroidBelt);
+}
+
+// Call the function to create the asteroid belt after scene setup (before animation loop)
+createAsteroidBelt();
+</script>
+
     </script>
 </body>
 
