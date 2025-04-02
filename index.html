@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FalakZoom</title>
+    <title>3D Solar System Simulator</title>
     <style>
         body {
             margin: 0;
@@ -50,7 +50,7 @@
     <script>
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-        camera.position.set(0, 50, 100);
+        camera.position.set(0, 50, 200);  // Adjust camera position further back
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -60,11 +60,12 @@
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
 
-        const sunLight = new THREE.PointLight(0xffffff, 3, 1000);
+        // Lighting adjustments
+        const sunLight = new THREE.PointLight(0xffffff, 10, 1000);  // Increased intensity
         sunLight.position.set(0, 0, 0);
         scene.add(sunLight);
 
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        const ambientLight = new THREE.AmbientLight(0x404040, 1);  // Increased intensity
         scene.add(ambientLight);
 
         const gltfLoader = new THREE.GLTFLoader();
@@ -84,6 +85,7 @@
         const planetMeshes = [];
         planets.forEach((planet) => {
             gltfLoader.load(`https://raw.githubusercontent.com/zaainshaikh/zaainshaikh.github.io/main/models/${planet.name.toLowerCase()}.glb`, (gltf) => {
+                console.log(`${planet.name} model loaded successfully!`);  // Log successful model load
                 const model = gltf.scene;
                 model.scale.set(planet.radius, planet.radius, planet.radius);
                 model.position.x = planet.distance;
@@ -98,6 +100,7 @@
 
         function animate() {
             requestAnimationFrame(animate);
+
             planetMeshes.forEach(({ mesh, planet }) => {
                 if (planet.distance > 0) {
                     planet.angle += planet.speed;
@@ -106,8 +109,10 @@
                 }
                 mesh.rotation.y += planet.rotation;
             });
+
             controls.update();
             renderer.render(scene, camera);
+            console.log("Rendering frame...");  // Check if render loop is working
         }
         animate();
 
