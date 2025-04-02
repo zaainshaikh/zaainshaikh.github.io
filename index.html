@@ -3,119 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Solar System Simulator</title>
+    <title>Interactive 3D Solar System</title>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: black;
-            font-family: Arial, sans-serif;
-        }
-        #infoPanel {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            display: none;
-            max-width: 350px;
-            font-size: 14px;
-        }
-        #closeBtn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            cursor: pointer;
-            color: #ff4444;
-        }
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
     </style>
 </head>
 <body>
-    <div id="infoPanel">
-        <span id="closeBtn">X</span>
-        <h2 id="planetName"></h2>
-        <p id="planetInfo"></p>
-    </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/GLTFLoader.js"></script>
     <script>
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-        camera.position.set(0, 50, 200);
+        let scene, camera, renderer, loader;
+        let planets = [];
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        function init() {
+            // Scene Setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
 
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(ambientLight, directionalLight);
 
-        const sunLight = new THREE.PointLight(0xffffff, 10, 1000);
-        sunLight.position.set(0, 0, 0);
-        scene.add(sunLight);
+            // Initialize the GLTFLoader
+            loader = new THREE.GLTFLoader();
 
-        const ambientLight = new THREE.AmbientLight(0x404040, 1);
-        scene.add(ambientLight);
+            // Load .glb models from the models folder
+            loadPlanet('Uranus', 'models/uranus.glb', 2, -5, 0, 0);
+            loadPlanet('Neptune', 'models/neptune.glb', 2, 5, 0, 0);
+            loadPlanet('Earth', 'models/earth.glb', 1.5, 0, 0, -5);
+            loadPlanet('Mars', 'models/mars.glb', 1.2, 0, 0, 5);
 
-        const gltfLoader = new THREE.GLTFLoader();
+            // Camera position
+            camera.position.set(0, 3, 10);
 
-        const planets = [
-            { name: "Sun", radius: 5, distance: 0, speed: 0, tilt: 0, rotation: 0.01 },
-            { name: "Mercury", radius: 0.5, distance: 10, speed: 0.04, tilt: 0.034, rotation: 0.003 },
-            { name: "Venus", radius: 0.8, distance: 15, speed: 0.015, tilt: 177.4, rotation: 0.0004 },
-            { name: "Earth", radius: 1, distance: 20, speed: 0.01, tilt: 23.5, rotation: 0.05 },
-            { name: "Mars", radius: 0.7, distance: 25, speed: 0.008, tilt: 25.2, rotation: 0.048 },
-            { name: "Jupiter", radius: 2.5, distance: 35, speed: 0.004, tilt: 3.1, rotation: 0.1 },
-            { name: "Saturn", radius: 2, distance: 45, speed: 0.003, tilt: 26.7, rotation: 0.09 },
-            { name: "Uranus", radius: 1.5, distance: 55, speed: 0.002, tilt: 97.8, rotation: 0.06 },
-            { name: "Neptune", radius: 1.5, distance: 65, speed: 0.0015, tilt: 28.3, rotation: 0.07 }
-        ];
+            // Handle Window Resize
+            window.addEventListener('resize', onWindowResize, false);
 
-        const planetMeshes = [];
-        planets.forEach((planet) => {
-            gltfLoader.load(`https://raw.githubusercontent.com/zaainshaikh/zaainshaikh.github.io/main/models/${planet.name.toLowerCase()}.glb`, (gltf) => {
-                console.log(`${planet.name} model loaded successfully!`);
-                const model = gltf.scene;
-                model.scale.set(planet.radius, planet.radius, planet.radius);
-                model.position.x = planet.distance;
-                model.rotation.x = planet.tilt * Math.PI / 180;
-                scene.add(model);
+            animate();
+        }
 
-                planetMeshes.push({ mesh: model, planet, angle: 0 });
-            }, undefined, (error) => {
-                console.error(`Error loading ${planet.name} model:`, error);
+        function loadPlanet(name, url, scale, x, y, z) {
+            loader.load(url, function(gltf) {
+                const planet = gltf.scene;
+                planet.name = name;
+
+                // Apply fallback texture if missing
+                planet.traverse(function(child) {
+                    if (child.isMesh) {
+                        child.material.map = child.material.map || createFallbackTexture();
+                    }
+                });
+
+                // Position, scale, and add to scene
+                planet.position.set(x, y, z);
+                planet.scale.set(scale, scale, scale);
+                scene.add(planet);
+                planets.push(planet);
+
+                console.log(`${name} model loaded successfully!`);
+            }, undefined, function(error) {
+                console.error(`Error loading ${name} model:`, error);
             });
-        });
+        }
+
+        function createFallbackTexture() {
+            const texture = new THREE.TextureLoader().load('https://via.placeholder.com/150');
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
 
         function animate() {
             requestAnimationFrame(animate);
 
-            planetMeshes.forEach(({ mesh, planet }) => {
-                if (planet.distance > 0) {
-                    planet.angle += planet.speed;
-                    mesh.position.x = Math.cos(planet.angle) * planet.distance;
-                    mesh.position.z = Math.sin(planet.angle) * planet.distance;
-                }
-                mesh.rotation.y += planet.rotation;
+            // Rotate planets for animation
+            planets.forEach(planet => {
+                planet.rotation.y += 0.01;
             });
 
-            controls.update();
-            renderer.render(scene, camera);
-            console.log("Rendering frame...");
+            render();
         }
-        animate();
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        function render() {
+            renderer.render(scene, camera);
+        }
+
+        init();
     </script>
 </body>
 </html>
