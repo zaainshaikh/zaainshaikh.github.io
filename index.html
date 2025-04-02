@@ -137,7 +137,7 @@
             const material = new THREE.MeshStandardMaterial({
                 color: 0xffffff,
                 emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
-                emissiveIntensity: planet.name === "Sun" ? 1 : 0
+                emissiveIntensity: planet.name === "Sun" ? 2 : 0
             });
 
             loader.load(`textures/${planet.texture}`,
