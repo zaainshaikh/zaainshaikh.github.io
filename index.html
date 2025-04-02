@@ -87,10 +87,9 @@
         controls.dampingFactor = 0.05;
 
         // Advanced Lighting
-        const sunLight = new THREE.PointLight(0xffffff, 5, 1000);  // Increase intensity to make it brighter
-sunLight.position.set(0, 0, 0);
-scene.add(sunLight);
-
+        const sunLight = new THREE.PointLight(0xffffff, 3, 1000);
+        sunLight.position.set(0, 0, 0);
+        scene.add(sunLight);
 
         const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
         scene.add(ambientLight);
@@ -160,26 +159,21 @@ scene.add(sunLight);
         const planetMeshes = [];
         planets.forEach((planet) => {
             const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
-const material = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
-    emissiveIntensity: planet.name === "Sun" ? 1.5 : 0
-});
-
+            const material = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
+                emissiveIntensity: planet.name === "Sun" ? 2 : 0
+            });
 
             loader.load(
     `textures/${planet.texture}`,
     (texture) => {
         material.map = texture;
-
-        // Boost texture brightness
+        
+        // Special treatment for the Sun
         if (planet.name === "Sun") {
-            const textureBrightnessFactor = 2;  // Adjust this value to increase brightness
-            const textureColor = new THREE.Color(1, 1, 1).multiplyScalar(textureBrightnessFactor);
-            material.color = textureColor; // Apply the brightness boost to the material color
             material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
-            material.emissiveIntensity = 3;
-            material.emissiveMap = texture;
+            material.emissiveIntensity = 1.5; // Boost brightness
         }
 
         material.needsUpdate = true;
