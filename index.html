@@ -34,10 +34,23 @@
     position: absolute;
     top: 5px;
     right: 5px;
-    cursor: pointer;
-    color: #ff4444;
+    font-size: 20px; /* Modern font size */
     font-weight: bold;
+    color: #ff4444; /* Bright red */
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease; /* Smooth animation */
+    padding: 5px;
+    background: transparent;
+    border: none;
+    border-radius: 5px;
 }
+
+#closeBtn:hover {
+    color: #ff6666; /* Slightly lighter red on hover */
+    transform: scale(1.2); /* Slight grow effect */
+    background: rgba(255, 255, 255, 0.2); /* Light background on hover */
+}
+
 
     </style>
 </head>
