@@ -140,11 +140,23 @@
                 emissiveIntensity: planet.name === "Sun" ? 2 : 0
             });
 
-            loader.load(`textures/${planet.texture}`,
-                (texture) => { material.map = texture; material.needsUpdate = true; },
-                undefined,
-                () => console.warn(`Failed to load texture for ${planet.name}`)
-            );
+            loader.load(
+    `textures/${planet.texture}`,
+    (texture) => {
+        material.map = texture;
+        
+        // Special treatment for the Sun
+        if (planet.name === "Sun") {
+            material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
+            material.emissiveIntensity = 1.5; // Boost brightness
+        }
+
+        material.needsUpdate = true;
+    },
+    undefined,
+    (err) => console.error(`Error loading texture: ${planet.texture}`, err)
+);
+
 
             const mesh = new THREE.Mesh(geometry, material);
             mesh.position.x = planet.distance;
