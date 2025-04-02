@@ -217,7 +217,7 @@ planetMeshes[6].mesh.add(rings);
         planetMeshes[5].mesh.add(redSpot);
 
         // Asteroid Belt
-        const asteroidGeometry = new THREE.BufferGeometry();
+      const asteroidGeometry = new THREE.IcosahedronGeometry(Math.random() * 0.5 + 0.2, 2); // Higher subdivisions (2) for smoother asteroids
         const asteroidCount = 1000;
         const asteroidPos = new Float32Array(asteroidCount * 3);
         for (let i = 0; i < asteroidCount; i++) {
