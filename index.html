@@ -84,12 +84,8 @@
         const planetMeshes = [];
         planets.forEach((planet) => {
             const geometry = new THREE.SphereGeometry(planet.radius, 64, 64);
-            const material = new THREE.MeshStandardMaterial({});
-            loader.load(planet.texture, (texture) => {
-                material.map = texture;
-                material.needsUpdate = true;
-            });
-
+            const material = new THREE.MeshStandardMaterial({ map: loader.load(planet.texture) });
+            
             const mesh = new THREE.Mesh(geometry, material);
             mesh.position.x = planet.distance;
             mesh.userData = planet;
@@ -142,5 +138,4 @@
         });
     </script>
 </body>
-
 </html>
