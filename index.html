@@ -83,7 +83,7 @@
 
         const planetMeshes = [];
         planets.forEach((planet) => {
-            gltfLoader.load(`https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME/main/models/${planet.name.toLowerCase()}.glb`, (gltf) => {
+            gltfLoader.load(`https://raw.githubusercontent.com/zaainshaikh/zaainshaikh.github.io/main/models/${planet.name.toLowerCase()}.glb`, (gltf) => {
                 const model = gltf.scene;
                 model.scale.set(planet.radius, planet.radius, planet.radius);
                 model.position.x = planet.distance;
