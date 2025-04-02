@@ -173,8 +173,10 @@ const material = new THREE.MeshStandardMaterial({
         
         // Special treatment for the Sun
         if (planet.name === "Sun") {
-            material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
-            material.emissiveIntensity = 1.5; // Boost brightness
+            // Apply emissive color for the glow
+            material.emissive = new THREE.Color(0xffff00); // Bright yellow
+            material.emissiveIntensity = 2; // Increase this value to make the glow brighter
+            material.emissiveMap = texture; // Use the texture as an emissive map if the texture should also glow
         }
 
         material.needsUpdate = true;
@@ -182,7 +184,6 @@ const material = new THREE.MeshStandardMaterial({
     undefined,
     (err) => console.error(`Error loading texture: ${planet.texture}`, err)
 );
-
 
             const mesh = new THREE.Mesh(geometry, material);
             mesh.position.x = planet.distance;
