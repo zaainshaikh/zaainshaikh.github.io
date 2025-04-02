@@ -152,7 +152,7 @@
         // Planet Meshes and Circular Orbits
         const planetMeshes = [];
         planets.forEach((planet) => {
-            const geometry = new THREE.SphereGeometry(planet.radius, 32, 32);
+            const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
             const material = new THREE.MeshStandardMaterial({
                 color: 0xffffff,
                 emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
