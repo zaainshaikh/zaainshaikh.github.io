@@ -64,27 +64,27 @@
         sunLight.position.set(0, 0, 0);
         scene.add(sunLight);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
         scene.add(ambientLight);
 
         const loader = new THREE.TextureLoader();
 
         const planets = [
-            { name: "Sun", radius: 5, distance: 0, speed: 0, rotation: 0.002, texture: "sun.jpg", info: "The Sun is the star at the center of the Solar System." },
-            { name: "Mercury", radius: 0.5, distance: 10, speed: 0.02, rotation: 0.001, texture: "mercury.jpg", info: "Mercury is the smallest planet and closest to the Sun." },
-            { name: "Venus", radius: 0.8, distance: 15, speed: 0.008, rotation: 0.0005, texture: "venus.jpg", info: "Venus has a thick, toxic atmosphere that traps heat." },
-            { name: "Earth", radius: 1, distance: 20, speed: 0.006, rotation: 0.0015, texture: "earth.jpg", info: "Earth is the only planet known to support life." },
-            { name: "Mars", radius: 0.7, distance: 25, speed: 0.005, rotation: 0.0012, texture: "mars.jpg", info: "Mars is known as the Red Planet due to iron oxide on its surface." },
-            { name: "Jupiter", radius: 2.5, distance: 35, speed: 0.002, rotation: 0.002, texture: "jupiter.jpg", info: "Jupiter is the largest planet in the Solar System." },
-            { name: "Saturn", radius: 2, distance: 45, speed: 0.0015, rotation: 0.0018, texture: "saturn.jpg", info: "Saturn is famous for its prominent ring system." },
-            { name: "Uranus", radius: 1.5, distance: 55, speed: 0.001, rotation: 0.0015, texture: "uranus.jpg", info: "Uranus orbits the Sun on its side." },
-            { name: "Neptune", radius: 1.5, distance: 65, speed: 0.0008, rotation: 0.001, texture: "neptune.jpg", info: "Neptune is the farthest planet from the Sun." }
+            { name: "Sun", radius: 5, distance: 0, speed: 0, rotation: 0.0015, texture: "sun.jpg", info: "The Sun is the star at the center of the Solar System." },
+            { name: "Mercury", radius: 0.5, distance: 10, speed: 0.015, rotation: 0.0008, texture: "mercury.jpg", info: "Mercury is the smallest planet and closest to the Sun." },
+            { name: "Venus", radius: 0.8, distance: 15, speed: 0.006, rotation: 0.0004, texture: "venus.jpg", info: "Venus has a thick, toxic atmosphere that traps heat." },
+            { name: "Earth", radius: 1, distance: 20, speed: 0.004, rotation: 0.0012, texture: "earth.jpg", info: "Earth is the only planet known to support life." },
+            { name: "Mars", radius: 0.7, distance: 25, speed: 0.0035, rotation: 0.001, texture: "mars.jpg", info: "Mars is known as the Red Planet due to iron oxide on its surface." },
+            { name: "Jupiter", radius: 2.5, distance: 35, speed: 0.0015, rotation: 0.0015, texture: "jupiter.jpg", info: "Jupiter is the largest planet in the Solar System." },
+            { name: "Saturn", radius: 2, distance: 45, speed: 0.0012, rotation: 0.0013, texture: "saturn.jpg", info: "Saturn is famous for its prominent ring system." },
+            { name: "Uranus", radius: 1.5, distance: 55, speed: 0.0008, rotation: 0.001, texture: "uranus.jpg", info: "Uranus orbits the Sun on its side." },
+            { name: "Neptune", radius: 1.5, distance: 65, speed: 0.0006, rotation: 0.0008, texture: "neptune.jpg", info: "Neptune is the farthest planet from the Sun." }
         ];
 
         const planetMeshes = [];
         planets.forEach((planet) => {
-            const geometry = new THREE.SphereGeometry(planet.radius, 32, 32);
-            const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+            const geometry = new THREE.SphereGeometry(planet.radius, 64, 64);
+            const material = new THREE.MeshStandardMaterial({});
             loader.load(planet.texture, (texture) => {
                 material.map = texture;
                 material.needsUpdate = true;
