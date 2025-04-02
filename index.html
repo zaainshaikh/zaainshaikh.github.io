@@ -28,36 +28,22 @@
     font-size: 14px;
     font-family: 'Poppins', sans-serif;
     line-height: 1.6;
-    text-align: right;  /* Align all text to the right */
+    text-align: right;
 }
-
-#planetName {
-    text-align: right;  /* Ensure the planet name is also aligned to the right */
-}
-
-#planetInfo {
-    text-align: right;  /* Align planet information to the right */
-}
-
 
 #closeBtn {
     position: absolute;
     top: 5px;
-    right: 5px;
+    left: 5px;  /* Move the close button to the left side */
     font-size: 20px; /* Modern font size */
     font-weight: bold;
     color: #ff4444; /* Bright red */
     cursor: pointer;
     transition: transform 0.2s ease, color 0.2s ease; /* Smooth animation */
     padding: 5px;
-    width: 30px; /* Set width */
-    height: 30px; /* Set height */
     background: transparent;
     border: none;
-    border-radius: 50%; /* Make it circular */
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Center the "X" inside the button */
+    border-radius: 5px;
 }
 
 #closeBtn:hover {
@@ -65,8 +51,6 @@
     transform: scale(1.2); /* Slight grow effect */
     background: rgba(255, 255, 255, 0.2); /* Light background on hover */
 }
-
-
 
     </style>
 </head>
