@@ -151,36 +151,44 @@
 
         // Planet Meshes and Circular Orbits
         const planetMeshes = [];
-        planets.forEach((planet) => {
-            const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
-            const material = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
-                emissiveIntensity: planet.name === "Sun" ? 2 : 0
-            });
+       planets.forEach((planet) => {
+    const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
+    let material;
 
-            loader.load(
-    `textures/${planet.texture}`,
-    (texture) => {
-        material.map = texture;
-        
-        // Special treatment for the Sun
-        if (planet.name === "Sun") {
-            material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
-            material.emissiveIntensity = 1.5; // Boost brightness
-        }
+    // For the Sun, we directly apply an emissive material without texture
+    if (planet.name === "Sun") {
+        material = new THREE.MeshStandardMaterial({
+            color: 0xffff00,  // Bright yellow color
+            emissive: 0xffff00,  // Emissive glow
+            emissiveIntensity: 1.5,  // Boost the brightness for the glow effect
+            roughness: 0,  // Smooth surface
+            metalness: 0   // Non-metallic
+        });
+    } else {
+        // For other planets, load textures as before
+        material = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
+            emissiveIntensity: planet.name === "Sun" ? 2 : 0
+        });
 
-        material.needsUpdate = true;
-    },
-    undefined,
-    (err) => console.error(`Error loading texture: ${planet.texture}`, err)
-);
+        loader.load(
+            `textures/${planet.texture}`,
+            (texture) => {
+                material.map = texture;
+                material.needsUpdate = true;
+            },
+            undefined,
+            (err) => console.error(`Error loading texture: ${planet.texture}`, err)
+        );
+    }
 
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.x = planet.distance;
+    mesh.rotation.x = planet.tilt * Math.PI / 180;
+    scene.add(mesh);
+});
 
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.x = planet.distance;
-            mesh.rotation.x = planet.tilt * Math.PI / 180;
-            scene.add(mesh);
 
             // Circular Orbit Path
             if (planet.distance > 0) {
