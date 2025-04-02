@@ -24,6 +24,7 @@
             display: none;
             max-width: 350px;
             font-size: 14px;
+            z-index: 10;
         }
 
         #closeBtn {
@@ -63,48 +64,41 @@
         sunLight.position.set(0, 0, 0);
         scene.add(sunLight);
 
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
         scene.add(ambientLight);
 
         const loader = new THREE.TextureLoader();
 
         const planets = [
-            { name: "Sun", radius: 5, distance: 0, speed: 0, rotation: 0.005, texture: "sun.jpg" },
-            { name: "Mercury", radius: 0.5, distance: 10, speed: 0.02, rotation: 0.0015, texture: "mercury.jpg" },
-            { name: "Venus", radius: 0.8, distance: 15, speed: 0.008, rotation: 0.0008, texture: "venus.jpg" },
-            { name: "Earth", radius: 1, distance: 20, speed: 0.006, rotation: 0.002, texture: "earth.jpg" },
-            { name: "Mars", radius: 0.7, distance: 25, speed: 0.005, rotation: 0.0018, texture: "mars.jpg" },
-            { name: "Jupiter", radius: 2.5, distance: 35, speed: 0.002, rotation: 0.003, texture: "jupiter.jpg" },
-            { name: "Saturn", radius: 2, distance: 45, speed: 0.0015, rotation: 0.0025, texture: "saturn.jpg" },
-            { name: "Uranus", radius: 1.5, distance: 55, speed: 0.001, rotation: 0.002, texture: "uranus.jpg" },
-            { name: "Neptune", radius: 1.5, distance: 65, speed: 0.0008, rotation: 0.0015, texture: "neptune.jpg" }
+            { name: "Sun", radius: 5, distance: 0, speed: 0, rotation: 0.002, texture: "sun.jpg", info: "The Sun is the star at the center of the Solar System." },
+            { name: "Mercury", radius: 0.5, distance: 10, speed: 0.02, rotation: 0.001, texture: "mercury.jpg", info: "Mercury is the smallest planet and closest to the Sun." },
+            { name: "Venus", radius: 0.8, distance: 15, speed: 0.008, rotation: 0.0005, texture: "venus.jpg", info: "Venus has a thick, toxic atmosphere that traps heat." },
+            { name: "Earth", radius: 1, distance: 20, speed: 0.006, rotation: 0.0015, texture: "earth.jpg", info: "Earth is the only planet known to support life." },
+            { name: "Mars", radius: 0.7, distance: 25, speed: 0.005, rotation: 0.0012, texture: "mars.jpg", info: "Mars is known as the Red Planet due to iron oxide on its surface." },
+            { name: "Jupiter", radius: 2.5, distance: 35, speed: 0.002, rotation: 0.002, texture: "jupiter.jpg", info: "Jupiter is the largest planet in the Solar System." },
+            { name: "Saturn", radius: 2, distance: 45, speed: 0.0015, rotation: 0.0018, texture: "saturn.jpg", info: "Saturn is famous for its prominent ring system." },
+            { name: "Uranus", radius: 1.5, distance: 55, speed: 0.001, rotation: 0.0015, texture: "uranus.jpg", info: "Uranus orbits the Sun on its side." },
+            { name: "Neptune", radius: 1.5, distance: 65, speed: 0.0008, rotation: 0.001, texture: "neptune.jpg", info: "Neptune is the farthest planet from the Sun." }
         ];
 
         const planetMeshes = [];
         planets.forEach((planet) => {
             const geometry = new THREE.SphereGeometry(planet.radius, 32, 32);
-            const material = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
-                emissiveIntensity: planet.name === "Sun" ? 1 : 0
+            const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+            loader.load(planet.texture, (texture) => {
+                material.map = texture;
+                material.needsUpdate = true;
             });
-
-            loader.load(planet.texture,
-                (texture) => { material.map = texture; material.needsUpdate = true; },
-                undefined,
-                () => console.warn(`Failed to load texture for ${planet.name}`)
-            );
 
             const mesh = new THREE.Mesh(geometry, material);
             mesh.position.x = planet.distance;
+            mesh.userData = planet;
             scene.add(mesh);
-
             planetMeshes.push({ mesh, planet, angle: 0 });
         });
 
         function animate() {
             requestAnimationFrame(animate);
-
             planetMeshes.forEach((planet) => {
                 const { mesh, planet: data } = planet;
                 if (data.distance > 0) {
@@ -114,7 +108,6 @@
                 }
                 mesh.rotation.y += data.rotation;
             });
-
             controls.update();
             renderer.render(scene, camera);
         }
@@ -124,6 +117,28 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        window.addEventListener('click', (event) => {
+            const mouse = new THREE.Vector2(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1
+            );
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children);
+            if (intersects.length > 0) {
+                const planet = intersects[0].object.userData;
+                if (planet) {
+                    document.getElementById('planetName').innerText = planet.name;
+                    document.getElementById('planetInfo').innerText = planet.info;
+                    document.getElementById('infoPanel').style.display = 'block';
+                }
+            }
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            document.getElementById('infoPanel').style.display = 'none';
         });
     </script>
 </body>
