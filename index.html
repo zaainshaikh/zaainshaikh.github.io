@@ -205,34 +205,46 @@
         }
       ];
 
-      // Planet Meshes and Circular Orbits
-      const planetMeshes = [];
-      planets.forEach((planet) => {
-        const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
-        
-        // Create the material
-        const material = new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          emissive: planet.name === "الشمس" ? 0xffff00 : 0x000000, // Set emissive to yellow for Sun, black for others
-          emissiveIntensity: planet.name === "الشمس" ? 1.5 : 0, // Higher intensity for Sun
-        });
+// Planet Meshes and Circular Orbits
+const planetMeshes = [];
+planets.forEach((planet) => {
+  const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
+  let material = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    emissive: 0x000000, // No emissive for other planets
+    emissiveIntensity: 0
+  });
 
-        loader.load(`textures/${planet.texture}`, (texture) => {
-          material.map = texture; // Apply the texture
+  loader.load(`textures/${planet.texture}`, (texture) => {
+    material.map = texture; // Apply the texture to the planet
 
-          // Special treatment for the Sun (to make it glow)
-          if (planet.name === "الشمس") {
-            material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
-            material.emissiveIntensity = 1.5; // Boost brightness for the Sun
-          }
+    // Special treatment for the Sun (to make it glow)
+    if (planet.name === "الشمس") {
+      // For the Sun, apply a glowing effect with a slightly larger radius
+      const sunGlowMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffff00,
+        emissive: 0xffff00, // Set emissive to yellow
+        emissiveIntensity: 2, // Increase glow intensity
+        transparent: true,
+        opacity: 0.6 // Adjust opacity to create a glowing effect
+      });
 
-          material.needsUpdate = true;
-        }, undefined, (err) => console.error(`Error loading texture: ${planet.texture}`, err));
+      // Create a larger sphere for the glow
+      const glowGeometry = new THREE.SphereGeometry(planet.radius * 1.2, 128, 128);
+      const glowMesh = new THREE.Mesh(glowGeometry, sunGlowMaterial);
+      glowMesh.position.x = planet.distance;
+      scene.add(glowMesh);
+    }
 
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = planet.distance;
-        mesh.rotation.x = planet.tilt * Math.PI / 180;
-        scene.add(mesh);
+    material.needsUpdate = true;
+  }, undefined, (err) => console.error(`Error loading texture: ${planet.texture}`, err));
+
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.x = planet.distance;
+  mesh.rotation.x = planet.tilt * Math.PI / 180;
+  scene.add(mesh);
+});
+
 
         // Circular Orbit Path
         if (planet.distance > 0) {
