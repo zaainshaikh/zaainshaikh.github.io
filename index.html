@@ -242,16 +242,36 @@ planetMeshes[6].mesh.add(rings);
         scene.add(asteroids);
 
         // Comet with Tail
-        const cometGeometry = new THREE.SphereGeometry(0.2, 16, 16);
-        const cometMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff });
-        const comet = new THREE.Mesh(cometGeometry, cometMaterial);
-        scene.add(comet);
-        const tailGeometry = new THREE.ConeGeometry(0.5, 3, 16);
-        const tailMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff, transparent: true, opacity: 0.5 });
-        const tail = new THREE.Mesh(tailGeometry, tailMaterial);
-        tail.rotation.x = Math.PI;
-        tail.position.z = -1.5;
-        comet.add(tail);
+        // Comet Nucleus (Head)
+const nucleusGeometry = new THREE.SphereGeometry(1, 16, 16); // Sphere for the nucleus
+const nucleusMaterial = new THREE.MeshStandardMaterial({
+  color: 0x88ccff, // Light blue color for the comet
+  emissive: 0x55aaff, // Slight emissive glow
+  emissiveIntensity: 1.5, // Increase intensity for glow
+  roughness: 0.8, // Rough surface
+  metalness: 0.2, // A little metallic
+});
+const nucleus = new THREE.Mesh(nucleusGeometry, nucleusMaterial);
+scene.add(nucleus);
+
+// Create Comet Tail (Better Tail)
+const tailLength = 8;  // Length of the tail
+const tailGeometry = new THREE.CylinderGeometry(0.1, 0.5, tailLength, 16, 4); // Use CylinderGeometry for a better tail
+const tailMaterial = new THREE.MeshStandardMaterial({
+  color: 0x88ccff, // Same color as the comet
+  transparent: true,
+  opacity: 0.6, // Make the tail slightly transparent
+  emissive: 0x88ccff, // Glowing effect for the tail
+  emissiveIntensity: 0.8,
+});
+const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+tail.rotation.x = Math.PI / 2; // Rotate the tail to align properly
+tail.position.set(0, 0, -nucleusGeometry.parameters.radius - tailLength / 2); // Position tail behind nucleus
+nucleus.add(tail); // Attach the tail to the nucleus
+
+// Keep comet position static initially
+nucleus.position.set(Math.random() * 100 - 50, Math.random() * 50 - 25, Math.random() * 100 - 50);
+
 
         // Dust Particles
         const dustGeometry = new THREE.BufferGeometry();
