@@ -76,8 +76,8 @@
         document.body.appendChild(renderer.domElement);
 
         // Controls
-        controls.maxDistance = 300; // Adjust this number as needed
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.maxDistance = 300; // Adjust this number as needed
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
 
