@@ -202,30 +202,36 @@
         texture: "neptune.jpg",
         info: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -201°C\nعملاق جليدي\nيتميز بلونه الأزرق العميق، يمتلك أقوى الرياح في المجموعة الشمسية، وله 14 قمرًا"
       }];
-      // Planet Meshes and Circular Orbits
-      const planetMeshes = [];
-      planets.forEach((planet) => {
-        const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
-        const material = new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
-          emissiveIntensity: planet.name === "Sun" ? 2 : 0
-        });
-        loader.load(`textures/${planet.texture}`,
-          (texture) => {
-            material.map = texture;
-            // Special treatment for the Sun
-            if (planet.name === "Sun") {
-              material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
-              material.emissiveIntensity = 1.5; // Boost brightness
-            }
-            material.needsUpdate = true;
-          }, undefined,
-          (err) => console.error(`Error loading texture: ${planet.texture}`, err));
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = planet.distance;
-        mesh.rotation.x = planet.tilt * Math.PI / 180;
-        scene.add(mesh);
+// Planet Meshes and Circular Orbits
+const planetMeshes = [];
+planets.forEach((planet) => {
+  const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
+  
+  // Create the material
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    emissive: planet.name === "الشمس" ? 0xffff00 : 0x000000, // Set emissive to yellow for Sun, black for others
+    emissiveIntensity: planet.name === "الشمس" ? 1.5 : 0, // Higher intensity for Sun
+  });
+
+  loader.load(`textures/${planet.texture}`, (texture) => {
+    material.map = texture;
+
+    // Special treatment for the Sun
+    if (planet.name === "الشمس") {
+      material.emissive = new THREE.Color(0xffff00); // Set to bright yellow glow
+      material.emissiveIntensity = 1.5; // Boost brightness for the Sun
+    }
+
+    material.needsUpdate = true;
+  }, undefined, (err) => console.error(`Error loading texture: ${planet.texture}`, err));
+
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.x = planet.distance;
+  mesh.rotation.x = planet.tilt * Math.PI / 180;
+  scene.add(mesh);
+});
+
         // Circular Orbit Path
         if (planet.distance > 0) {
           const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 128);
