@@ -112,7 +112,7 @@
                 speed: 0,
                 rotation: 0.002,
                 texture: "sun.jpg",
-                info: "The Sun is the star at the center of the Solar System."
+                info: "الشمس هي النجم في مركز النظام الشمسي."
             },
             {
                 name: "Mercury",
@@ -121,7 +121,7 @@
                 speed: 0.03,
                 rotation: 0.004,
                 texture: "mercury.jpg",
-                info: "Mercury is the closest planet to the Sun."
+                info: "عطارد هو الكوكب الأقرب إلى الشمس."
             },
             {
                 name: "Venus",
@@ -130,7 +130,7 @@
                 speed: 0.02,
                 rotation: 0.002,
                 texture: "venus.jpg",
-                info: "Venus is the second planet from the Sun."
+                info: "الزهرة هو الكوكب الثاني من الشمس."
             },
             {
                 name: "Earth",
@@ -139,7 +139,7 @@
                 speed: 0.01,
                 rotation: 0.003,
                 texture: "earth.jpg",
-                info: "Earth is the third planet from the Sun."
+                info: "الأرض هو الكوكب الثالث من الشمس."
             },
             {
                 name: "Mars",
@@ -148,7 +148,7 @@
                 speed: 0.008,
                 rotation: 0.002,
                 texture: "mars.jpg",
-                info: "Mars is the fourth planet from the Sun."
+                info: "المريخ هو الكوكب الرابع من الشمس."
             },
             {
                 name: "Jupiter",
@@ -157,7 +157,7 @@
                 speed: 0.005,
                 rotation: 0.001,
                 texture: "jupiter.jpg",
-                info: "Jupiter is the fifth planet from the Sun."
+                info: "المشتري هو الكوكب الخامس من الشمس."
             },
             {
                 name: "Saturn",
@@ -166,7 +166,7 @@
                 speed: 0.003,
                 rotation: 0.001,
                 texture: "saturn.jpg",
-                info: "Saturn is the sixth planet from the Sun."
+                info: "زحل هو الكوكب السادس من الشمس."
             },
             {
                 name: "Uranus",
@@ -175,7 +175,7 @@
                 speed: 0.002,
                 rotation: 0.001,
                 texture: "uranus.jpg",
-                info: "Uranus is the seventh planet from the Sun."
+                info: "أورانوس هو الكوكب السابع من الشمس."
             },
             {
                 name: "Neptune",
@@ -184,7 +184,7 @@
                 speed: 0.001,
                 rotation: 0.001,
                 texture: "neptune.jpg",
-                info: "Neptune is the eighth planet from the Sun."
+                info: "نبتون هو الكوكب الثامن من الشمس."
             }
         ];
 
@@ -262,95 +262,6 @@
         const tailGeometry = new THREE.ConeGeometry(0.5, 3, 16);
         const tailMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff, transparent: true, opacity: 0.5 });
         const tail = new THREE.Mesh(tailGeometry, tailMaterial);
-        tail.rotation.x = Math.PI;
-        tail.position.z = -1.5;
-        comet.add(tail);
-
-        const dustGeometry = new THREE.BufferGeometry();
-        const dustCount = 2000;
-        const dustPos = new Float32Array(dustCount * 3);
-        for (let i = 0; i < dustCount; i++) {
-            dustPos[i * 3] = (Math.random() - 0.5) * 150;
-            dustPos[i * 3 + 1] = (Math.random() - 0.5) * 150;
-            dustPos[i * 3 + 2] = (Math.random() - 0.5) * 150;
-        }
-        dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
-        const dustMaterial = new THREE.PointsMaterial({ color: 0x666666, size: 0.05, transparent: true, opacity: 0.3 });
-        const dust = new THREE.Points(dustGeometry, dustMaterial);
-        scene.add(dust);
-
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        const infoPanel = document.getElementById('infoPanel');
-        const planetName = document.getElementById('planetName');
-        const planetInfo = document.getElementById('planetInfo');
-        const closeBtn = document.getElementById('closeBtn');
-
-        window.addEventListener('click', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
-
-            if (intersects.length > 0) {
-                const planet = intersects[0].object;
-                const data = planetMeshes.find(p => p.mesh === planet).planet;
-                planetName.textContent = data.name;
-                planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
-                infoPanel.style.display = 'block';
-
-                // Camera smooth move
-                const targetPos = new THREE.Vector3().copy(planet.position).add(new THREE.Vector3(0, 5, 10));
-                gsap.to(camera.position, {
-                    duration: 2,
-                    x: targetPos.x,
-                    y: targetPos.y,
-                    z: targetPos.z,
-                    onUpdate: () => camera.lookAt(planet.position)
-                });
-
-                gsap.to(controls.target, {
-                    duration: 2,
-                    x: planet.position.x,
-                    y: planet.position.y,
-                    z: planet.position.z
-                });
-            }
-        });
-
-        closeBtn.addEventListener('click', () => {
-            infoPanel.style.display = 'none';
-        });
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            planetMeshes.forEach((planet) => {
-                const { mesh, planet: data } = planet;
-                if (data.distance > 0) {
-                    planet.angle += data.speed;
-                    mesh.position.x = Math.cos(planet.angle) * data.distance;
-                    mesh.position.z = Math.sin(planet.angle) * data.distance;
-                }
-                mesh.rotation.y += data.rotation;
-            });
-
-            const cometAngle = Date.now() * 0.0005;
-            comet.position.x = Math.cos(cometAngle) * 80;
-            comet.position.z = Math.sin(cometAngle) * 80;
-            comet.position.y = Math.sin(cometAngle * 2) * 20;
-
-            controls.update();
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
     </script>
 </body>
 
