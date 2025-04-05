@@ -246,7 +246,18 @@ planetMeshes[6].mesh.add(rings);
         const cometMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff });
         const comet = new THREE.Mesh(cometGeometry, cometMaterial);
         scene.add(comet);
-        const tailGeometry = new THREE.ConeGeometry(0.5, 3, 16);
+        const tailGeometry = new THREE.IcosahedronGeometry(0.5, 2); // Smaller size and low detail
+const vertices = tailGeometry.attributes.position.array;
+
+for (let i = 0; i < vertices.length; i += 3) {
+    // Apply random jitter to each vertex
+    vertices[i] += Math.random() * 0.2 - 0.1; // x-axis
+    vertices[i + 1] += Math.random() * 0.2 - 0.1; // y-axis
+    vertices[i + 2] += Math.random() * 0.2 - 0.1; // z-axis
+}
+
+tailGeometry.attributes.position.needsUpdate = true;
+
         const tailMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff, transparent: true, opacity: 0.5 });
         const tail = new THREE.Mesh(tailGeometry, tailMaterial);
         tail.rotation.x = Math.PI;
