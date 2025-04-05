@@ -339,7 +339,7 @@
               const planet = intersects[0].object;
               const data = planetMeshes.find(p => p.mesh === planet).planet;
               planetName.textContent = data.name;
-              planetInfo.innerHTML = data.info.replace(/\n/g, ' < br > ');
+              planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
                 infoPanel.style.display = 'block';
               }
             }); closeBtn.addEventListener('click', () => {
