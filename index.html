@@ -141,7 +141,7 @@
           tilt: 177.4,
           rotation: 0.0004,
           texture: "venus.jpg",
-          info: "القطر: 12,104 كيلومتر\nالكتلة: 4.87 × 10²⁴ كيلوغرام\nالمدار: 225 يومًا\nدرجة حرارة السطح: 464°C\nغلاف جوي كثيف مكون من ثاني أكسيد الكربون."
+          info: "القطر: 12,104 كيلومتر\nالكتلة: 4.87 × 10²⁴ كيلوغرام\nالمدار: 225 يومًا\nدرجة حرارة السطح: 464°C\nغلاف جوي كثيف من ثاني أكسيد الكربون."
         },
         {
           name: "الأرض",
@@ -151,7 +151,7 @@
           tilt: 23.5,
           rotation: 0.05,
           texture: "earth.jpg",
-          info: "القطر: 12,742 كيلومتر\nالكتلة: 5.97 × 10²⁴ كيلوغرام\nالمدار: 365.25 يومًا\nدرجة حرارة السطح: من -88°C إلى 58°C\nمغطى بالمياه والحياة."
+          info: "القطر: 12,742 كيلومتر\nالكتلة: 5.97 × 10²⁴ كيلوغرام\nالمدار: 365.25 يومًا\nدرجة حرارة السطح: من -88°C إلى 58°C\nمغطاة بالمياه والحياة."
         },
         {
           name: "المريخ",
@@ -161,7 +161,7 @@
           tilt: 25.2,
           rotation: 0.048,
           texture: "mars.jpg",
-          info: "القطر: 6,792 كيلومتر\nالكتلة: 6.42 × 10²³ كيلوغرام\nالمدار: 687 يومًا\nدرجة حرارة السطح: من -153°C إلى 20°C\nغلاف جوي رقيق."
+          info: "القطر: 6,792 كيلومتر\nالكتلة: 6.42 × 10²³ كيلوغرام\nالمدار: 687 يومًا\nدرجة حرارة السطح: من -153°C إلى 20°C\nغلاف جوي رقيق من ثاني أكسيد الكربون."
         },
         {
           name: "المشتري",
@@ -181,7 +181,7 @@
           tilt: 26.7,
           rotation: 0.09,
           texture: "saturn.jpg",
-          info: "القطر: 116,460 كيلومتر\nالكتلة: 5.68 × 10²⁶ كيلوغرام\nالمدار: 29.46 سنة\nدرجة حرارة السطح: -184°C\nيتميز بحلقاته الشهيرة المكونة من الجليد والصخور."
+          info: "القطر: 116,460 كيلومتر\nالكتلة: 5.68 × 10²⁶ كيلوغرام\nالمدار: 29.46 سنة\nدرجة حرارة السطح: -184°C\nيتميز بحلقاته الجميلة."
         },
         {
           name: "أورانوس",
@@ -191,7 +191,7 @@
           tilt: 97.8,
           rotation: 0.06,
           texture: "uranus.jpg",
-          info: "القطر: 50,724 كيلومتر\nالكتلة: 8.68 × 10²⁵ كيلوغرام\nالمدار: 84 سنة\nدرجة حرارة السطح: -224°C\nعملاق جليدي\nيدور على جانبه."
+          info: "القطر: 50,724 كيلومتر\nالكتلة: 8.68 × 10²⁵ كيلوغرام\nالمدار: 84 سنة\nدرجة حرارة السطح: -224°C\nعملاق جليدي\nيدور حول محوره بشكل جانبي."
         },
         {
           name: "نبتون",
@@ -201,40 +201,38 @@
           tilt: 28.3,
           rotation: 0.07,
           texture: "neptune.jpg",
-          info: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -201°C\nعملاق جليدي\nيتسم بالرياح السريعة والعواصف."
+          info: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -201°C\nعملاق جليدي\nيمتلك رياحًا شديدة السرعة."
         }
       ];
 
       // Planet Meshes and Circular Orbits
-const planetMeshes = [];
-planets.forEach((planet) => {
-  const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
-  
-  // Create the material
-  const material = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    emissive: planet.name === "الشمس" ? 0xffff00 : 0x000000, // Set emissive to yellow for Sun, black for others
-    emissiveIntensity: planet.name === "الشمس" ? 1.5 : 0, // Higher intensity for Sun
-  });
+      const planetMeshes = [];
+      planets.forEach((planet) => {
+        const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
+        
+        // Create the material
+        const material = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          emissive: planet.name === "الشمس" ? 0xffff00 : 0x000000, // Set emissive to yellow for Sun, black for others
+          emissiveIntensity: planet.name === "الشمس" ? 1.5 : 0, // Higher intensity for Sun
+        });
 
-  loader.load(`textures/${planet.texture}`, (texture) => {
-    material.map = texture; // Apply the texture
+        loader.load(`textures/${planet.texture}`, (texture) => {
+          material.map = texture; // Apply the texture
 
-    // Special treatment for the Sun (to make it glow)
-    if (planet.name === "الشمس") {
-      material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
-      material.emissiveIntensity = 1.5; // Boost brightness for the Sun
-    }
+          // Special treatment for the Sun (to make it glow)
+          if (planet.name === "الشمس") {
+            material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
+            material.emissiveIntensity = 1.5; // Boost brightness for the Sun
+          }
 
-    material.needsUpdate = true;
-  }, undefined, (err) => console.error(`Error loading texture: ${planet.texture}`, err));
+          material.needsUpdate = true;
+        }, undefined, (err) => console.error(`Error loading texture: ${planet.texture}`, err));
 
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.x = planet.distance;
-  mesh.rotation.x = planet.tilt * Math.PI / 180;
-  scene.add(mesh);
-});
-
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.x = planet.distance;
+        mesh.rotation.x = planet.tilt * Math.PI / 180;
+        scene.add(mesh);
 
         // Circular Orbit Path
         if (planet.distance > 0) {
