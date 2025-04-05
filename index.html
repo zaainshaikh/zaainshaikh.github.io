@@ -78,7 +78,7 @@
 
       // Controls
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.maxDistance = 300; // Adjust this number as needed
+      controls.maxDistance = 300;
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
 
@@ -201,185 +201,92 @@
           tilt: 28.3,
           rotation: 0.07,
           texture: "neptune.jpg",
-          info: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -201°C\nعملاق جليدي\nيتميز بلونه الأزرق الجميل"
+          info: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -214°C\nالجو مكون من الهيدروجين والهيليوم والميثان"
         }
       ];
 
-      // Planet Meshes and Circular Orbits
-      const planetMeshes = [];
-      planets.forEach((planet) => {
-        const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
-        let material = new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          emissive: 0x000000, // No emissive for other planets
-          emissiveIntensity: 0
+      // Function to Create Planets
+      function createPlanet(planetData) {
+        const texture = loader.load(`models/${planetData.texture}`);
+        const material = new THREE.MeshPhongMaterial({
+          map: texture,
+          emissive: planetData.name === "الشمس" ? 0xffcc00 : 0x000000,
+          emissiveIntensity: planetData.name === "الشمس" ? 1 : 0
         });
 
-        loader.load(`textures/${planet.texture}`, (texture) => {
-          material.map = texture; // Apply the texture to the planet
+        const geometry = new THREE.SphereGeometry(planetData.radius, 32, 32);
+        const planet = new THREE.Mesh(geometry, material);
+        planet.position.set(planetData.distance, 0, 0);
+        scene.add(planet);
 
-          // Special treatment for the Sun (to make it glow)
-          if (planet.name === "الشمس") {
-            // For the Sun, apply a glowing effect with a slightly larger radius
-            const sunGlowMaterial = new THREE.MeshBasicMaterial({
-              color: 0xffff00,
-              emissive: 0xffff00, // Set emissive to yellow
-              emissiveIntensity: 2, // Increase glow intensity
-              transparent: true,
-              opacity: 0.6 // Adjust opacity to create a glowing effect
-            });
+        // Planet Orbit (optional)
+        const orbit = new THREE.Group();
+        orbit.add(planet);
+        scene.add(orbit);
 
-            // Create a larger sphere for the glow
-            const glowGeometry = new THREE.SphereGeometry(planet.radius * 1.2, 128, 128);
-            const glowMesh = new THREE.Mesh(glowGeometry, sunGlowMaterial);
-            glowMesh.position.x = planet.distance;
-            scene.add(glowMesh);
-          }
-
-          material.needsUpdate = true;
-        }, undefined, (err) => console.error(`Error loading texture: ${planet.texture}`, err));
-
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = planet.distance;
-        mesh.rotation.x = planet.tilt * Math.PI / 180;
-        scene.add(mesh);
-
-        // Circular Orbit Path
-        if (planet.distance > 0) {
-          const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 128);
-          const orbitMaterial = new THREE.MeshBasicMaterial({
-            color: 0x333333,
-            side: THREE.DoubleSide
-          });
-          const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
-          orbit.rotation.x = Math.PI / 2;
-          scene.add(orbit);
+        // Rotation and Revolution Animation
+        function animatePlanet() {
+          planet.rotation.y += planetData.rotation;
+          orbit.rotation.y += planetData.speed;
         }
 
-        planetMeshes.push({ mesh, planet, angle: 0 });
-      });
-
-      // Saturn's Rings
-      const ringTexture = new THREE.TextureLoader().load("textures/saturn_ring.png");
-      const ringGeometry = new THREE.RingGeometry(2.5, 4, 64);
-      const ringMaterial = new THREE.MeshStandardMaterial({
-        map: ringTexture,
-        transparent: true,
-        side: THREE.DoubleSide
-      });
-      const rings = new THREE.Mesh(ringGeometry, ringMaterial);
-      rings.rotation.x = Math.PI / 2;
-      planetMeshes[6].mesh.add(rings);
-
-      // Jupiter's Great Red Spot
-      const spotGeometry = new THREE.SphereGeometry(0.3, 16, 16);
-      const spotMaterial = new THREE.MeshStandardMaterial({ color: 0xcc3300 });
-      const redSpot = new THREE.Mesh(spotGeometry, spotMaterial);
-      redSpot.position.set(2.5, 0, 0);
-      planetMeshes[5].mesh.add(redSpot);
-
-      // Asteroid Belt
-      const asteroidGeometry = new THREE.BufferGeometry();
-      const asteroidCount = 1000;
-      const asteroidPos = new Float32Array(asteroidCount * 3);
-      for (let i = 0; i < asteroidCount; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const radius = 27 + Math.random() * 5;
-        asteroidPos[i * 3] = Math.cos(angle) * radius;
-        asteroidPos[i * 3 + 1] = (Math.random() - 0.5) * 0.5;
-        asteroidPos[i * 3 + 2] = Math.sin(angle) * radius;
+        return {
+          planet,
+          orbit,
+          animatePlanet
+        };
       }
-      asteroidGeometry.setAttribute('position', new THREE.BufferAttribute(asteroidPos, 3));
-      const asteroidMaterial = new THREE.PointsMaterial({ color: 0x888888, size: 0.1 });
-      const asteroids = new THREE.Points(asteroidGeometry, asteroidMaterial);
-      scene.add(asteroids);
 
-      // Comet with Tail
-      const cometGeometry = new THREE.SphereGeometry(0.2, 16, 16);
-      const cometMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff });
-      const comet = new THREE.Mesh(cometGeometry, cometMaterial);
-      scene.add(comet);
+      // Create all Planets
+      const planetObjects = planets.map(createPlanet);
 
-      const tailGeometry = new THREE.IcosahedronGeometry(0.5, 1); // Reduce detail level for performance
-      const vertices = tailGeometry.attributes.position.array;
-      for (let i = 0; i < vertices.length; i += 3) {
-        vertices[i] += Math.random() * 0.2 - 0.1;
-        vertices[i + 1] += Math.random() * 0.2 - 0.1;
-        vertices[i + 2] += Math.random() * 0.2 - 0.1;
-      }
-      tailGeometry.attributes.position.needsUpdate = true;
-      const tailMaterial = new THREE.MeshStandardMaterial({
-        color: 0x88ccff,
-        transparent: true,
-        opacity: 0.5
-      });
-      const tail = new THREE.Mesh(tailGeometry, tailMaterial);
-      tail.rotation.x = Math.PI;
-      tail.position.z = -1.5;
-      comet.add(tail);
-
-      // Dust Particles
-      const dustGeometry = new THREE.BufferGeometry();
-      const dustCount = 2000;
-      const dustPos = new Float32Array(dustCount * 3);
-      for (let i = 0; i < dustCount; i++) {
-        dustPos[i * 3] = (Math.random() - 0.5) * 150;
-        dustPos[i * 3 + 1] = (Math.random() - 0.5) * 150;
-        dustPos[i * 3 + 2] = (Math.random() - 0.5) * 150;
-      }
-      dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
-      const dustMaterial = new THREE.PointsMaterial({
-        color: 0x666666,
-        size: 0.05,
-        transparent: true,
-        opacity: 0.3
-      });
-      const dust = new THREE.Points(dustGeometry, dustMaterial);
-      scene.add(dust);
-
-      // Raycasting for Click Detection
-      const raycaster = new THREE.Raycaster();
-      const mouse = new THREE.Vector2();
+      // Event Listeners for Info Panel
       const infoPanel = document.getElementById('infoPanel');
-      const planetName = document.getElementById('planetName');
-      const planetInfo = document.getElementById('planetInfo');
+      const planetNameElem = document.getElementById('planetName');
+      const planetInfoElem = document.getElementById('planetInfo');
       const closeBtn = document.getElementById('closeBtn');
 
-      window.addEventListener('click', (event) => {
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
-        if (intersects.length > 0) {
-          const planet = intersects[0].object;
-          const data = planetMeshes.find(p => p.mesh === planet).planet;
-          planetName.textContent = data.name;
-          planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
-          infoPanel.style.display = 'block';
-        }
-      });
+      function showInfo(planetData) {
+        planetNameElem.textContent = planetData.name;
+        planetInfoElem.textContent = planetData.info;
+        infoPanel.style.display = 'block';
+      }
 
       closeBtn.addEventListener('click', () => {
         infoPanel.style.display = 'none';
       });
 
-      // Animation Loop with Circular Orbits
+      // Planet Click Listener
+      window.addEventListener('click', (event) => {
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        // Normalize mouse coordinates
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+
+        const intersects = raycaster.intersectObjects(planetObjects.map(obj => obj.planet));
+
+        if (intersects.length > 0) {
+          const planet = intersects[0].object;
+          const planetData = planets.find(p => p.name === planet.name);
+          if (planetData) showInfo(planetData);
+        }
+      });
+
+      // Animation Loop
       function animate() {
         requestAnimationFrame(animate);
-        planetMeshes.forEach((planet) => {
-          const { mesh, planet: data } = planet;
-          if (data.distance > 0) {
-            planet.angle += data.speed;
-            mesh.position.x = Math.cos(planet.angle) * data.distance;
-            mesh.position.z = Math.sin(planet.angle) * data.distance;
-          }
-          mesh.rotation.y += data.rotation;
-        });
+
+        planetObjects.forEach(obj => obj.animatePlanet());
+
         controls.update();
         renderer.render(scene, camera);
       }
-      animate();
 
-      // Responsive Resize
-      window.addEventListener('resize', () => {
-        camera.aspect = window.inner
+      animate();
+    </script>
+  </body>
+</html>
