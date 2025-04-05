@@ -262,42 +262,24 @@
       const redSpot = new THREE.Mesh(spotGeometry, spotMaterial);
       redSpot.position.set(2.5, 0, 0);
       planetMeshes[5].mesh.add(redSpot);
-      // Asteroid Belt with Irregular Asteroids
-const asteroidGeometry = new THREE.BufferGeometry();
-const asteroidCount = 1000;
-const asteroidPos = new Float32Array(asteroidCount * 3);
-const asteroidShapes = []; // Array to store asteroid shapes
-
-for (let i = 0; i < asteroidCount; i++) {
-  const angle = Math.random() * Math.PI * 2;
-  const radius = 27 + Math.random() * 5;
-  asteroidPos[i * 3] = Math.cos(angle) * radius;
-  asteroidPos[i * 3 + 1] = (Math.random() - 0.5) * 0.5;
-  asteroidPos[i * 3 + 2] = Math.sin(angle) * radius;
-
-  // Create a random irregular asteroid shape
-  const shape = new THREE.IcosahedronGeometry(0.5 + Math.random() * 0.5, 2);
-  
-  // Apply a small random perturbation to vertices
-  shape.vertices.forEach(vertex => {
-    vertex.x += (Math.random() - 0.5) * 0.1;
-    vertex.y += (Math.random() - 0.5) * 0.1;
-    vertex.z += (Math.random() - 0.5) * 0.1;
-  });
-
-  asteroidShapes.push(new THREE.Mesh(shape, new THREE.MeshStandardMaterial({ color: 0x888888 })));
-}
-
-// Create asteroids from generated shapes
-const asteroids = new THREE.Group();
-for (let i = 0; i < asteroidCount; i++) {
-  const asteroid = asteroidShapes[i];
-  asteroid.position.set(asteroidPos[i * 3], asteroidPos[i * 3 + 1], asteroidPos[i * 3 + 2]);
-  asteroids.add(asteroid);
-}
-
-scene.add(asteroids);
-
+      // Asteroid Belt
+      const asteroidGeometry = new THREE.BufferGeometry();
+      const asteroidCount = 1000;
+      const asteroidPos = new Float32Array(asteroidCount * 3);
+      for (let i = 0; i < asteroidCount; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = 27 + Math.random() * 5;
+        asteroidPos[i * 3] = Math.cos(angle) * radius;
+        asteroidPos[i * 3 + 1] = (Math.random() - 0.5) * 0.5;
+        asteroidPos[i * 3 + 2] = Math.sin(angle) * radius;
+      }
+      asteroidGeometry.setAttribute('position', new THREE.BufferAttribute(asteroidPos, 3));
+      const asteroidMaterial = new THREE.PointsMaterial({
+        color: 0x888888,
+        size: 0.1
+      });
+      const asteroids = new THREE.Points(asteroidGeometry, asteroidMaterial);
+      scene.add(asteroids);
       // Comet with Tail
       const cometGeometry = new THREE.SphereGeometry(0.2, 16, 16);
       const cometMaterial = new THREE.MeshStandardMaterial({
