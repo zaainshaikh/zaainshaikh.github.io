@@ -34,20 +34,24 @@
 #closeBtn {
     position: absolute;
     top: 10px;
-    left: 10px;  /* Move the close button to the left side */
-    width: 30px;
-    height: 30px;
-    font-size: 18px; /* Modern font size */
+    left: 10px;
+    width: 30px; /* Fixed width */
+    height: 30px; /* Fixed height to make it square */
+    font-size: 18px; /* Adjust font size to fit inside */
     font-weight: bold;
-    color: #ff4444; /* Bright red */
+    color: #ff4444;
     cursor: pointer;
-    transition: transform 0.2s ease, color 0.2s ease; /* Smooth animation */
-    padding: 5px;
-    display: flex;
+    transition: transform 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    padding: 0; /* Remove extra padding */
     background: transparent;
     border: none;
     border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center the 'X' inside the square */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Centered shadow */
 }
+
 
 #closeBtn:hover {
     color: #ff6666; /* Slightly lighter red */
