@@ -35,37 +35,27 @@
         top: 10px;
         left: 10px;
         width: 30px;
-        /* Fixed width */
         height: 30px;
-        /* Fixed height to make it square */
         font-size: 18px;
-        /* Adjust font size to fit inside */
         font-weight: bold;
         color: #ff4444;
         cursor: pointer;
         transition: transform 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
         padding: 0;
-        /* Remove extra padding */
         background: transparent;
         border: none;
         border-radius: 5px;
         display: flex;
         justify-content: center;
         align-items: center;
-        /* Center the 'X' inside the square */
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-        /* Centered shadow */
       }
 
       #closeBtn:hover {
         color: #ff6666;
-        /* Slightly lighter red */
         transform: scale(1.15);
-        /* Slightly increase the size */
         background: rgba(255, 255, 255, 0.2);
-        /* Light background on hover */
         box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
-        /* Larger and more pronounced shadow on hover */
       }
     </style>
   </head>
@@ -82,27 +72,31 @@
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
       camera.position.set(0, 50, 100);
-      const renderer = new THREE.WebGLRenderer({
-        antialias: true
-      });
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
+
       // Controls
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.maxDistance = 300; // Adjust this number as needed
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
+
       // Advanced Lighting
       const sunLight = new THREE.PointLight(0xffffff, 1.5, 1000);
       sunLight.position.set(0, 0, 0);
       scene.add(sunLight);
+
       const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
       scene.add(ambientLight);
+
       const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.3);
       hemiLight.position.set(0, 100, 0);
       scene.add(hemiLight);
+
       // Texture Loader
       const loader = new THREE.TextureLoader();
+
       // Starry Background
       const starGeometry = new THREE.BufferGeometry();
       const starCount = 5000;
@@ -113,124 +107,127 @@
         positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
       }
       starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      const starMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.1
-      });
+      const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
       const stars = new THREE.Points(starGeometry, starMaterial);
       scene.add(stars);
+
       // Planets Data with Detailed Information
-      const planets = [{
-        name: "الشمس",
-        radius: 5,
-        distance: 0,
-        speed: 0,
-        tilt: 0,
-        rotation: 0.01,
-        texture: "sun.jpg",
-        info: "القطر: 1.391 مليون كيلومتر\nالكتلة: 1.989 × 10³⁰ كيلوغرام\nالعمر: 4.6 مليار سنة\nالنوع: نجم من النوع G في التسلسل الرئيسي\nدرجة حرارة النواة: 15 مليون درجة مئوية\nيحتوي على 99.86% من كتلة النظام الشمسي"
-      }, {
-        name: "عطارد",
-        radius: 0.5,
-        distance: 10,
-        speed: 0.02,
-        tilt: 0.034,
-        rotation: 0.003,
-        texture: "mercury.jpg",
-        info: "القطر: 4,879 كيلومتر\nالكتلة: 3.3 × 10²³ كيلوغرام\nالمدار: 88 يومًا\nدرجة حرارة السطح: من -173°C إلى 427°C\nلا يحتوي على غلاف جوي\nأصغر كواكب المجموعة الشمسية، كوكب صخري مليء بالفوهات"
-      }, {
-        name: "الزهرة",
-        radius: 0.8,
-        distance: 15,
-        speed: 0.007,
-        tilt: 177.4,
-        rotation: 0.0004,
-        texture: "venus.jpg",
-        info: "القطر: 12,104 كيلومتر\nالكتلة: 4.87 × 10²⁴ كيلوغرام\nالمدار: 225 يومًا\nدرجة حرارة السطح: 464°C\nغلاف جوي كثيف من ثاني أكسيد الكربون\nأسخن كواكب المجموعة الشمسية، يدور بعكس اتجاه الدوران المعتاد (حركة تراجعية)"
-      }, {
-        name: "الأرض",
-        radius: 1,
-        distance: 20,
-        speed: 0.005,
-        tilt: 23.5,
-        rotation: 0.05,
-        texture: "earth.jpg",
-        info: "القطر: 12,742 كيلومتر\nالكتلة: 5.97 × 10²⁴ كيلوغرام\nالمدار: 365.25 يومًا\nدرجة حرارة السطح: من -88°C إلى 58°C\nمغطاة بنسبة 71% بالمياه\nالكوكب الوحيد المعروف بوجود الحياة، وله قمر واحد"
-      }, {
-        name: "المريخ",
-        radius: 0.7,
-        distance: 25,
-        speed: 0.004,
-        tilt: 25.2,
-        rotation: 0.048,
-        texture: "mars.jpg",
-        info: "القطر: 6,792 كيلومتر\nالكتلة: 6.42 × 10²³ كيلوغرام\nالمدار: 687 يومًا\nدرجة حرارة السطح: من -153°C إلى 20°C\nغلاف جوي رقيق من ثاني أكسيد الكربون\nيظهر باللون الأحمر بسبب أكسيد الحديد، وله قمران"
-      }, {
-        name: "المشتري",
-        radius: 2.5,
-        distance: 35,
-        speed: 0.002,
-        tilt: 3.1,
-        rotation: 0.1,
-        texture: "jupiter.jpg",
-        info: "القطر: 139,820 كيلومتر\nالكتلة: 1.898 × 10²⁷ كيلوغرام\nالمدار: 11.86 سنة\nدرجة حرارة السطح: -145°C\nعملاق غازي\nأكبر كواكب المجموعة الشمسية، يحتوي على البقعة الحمراء العظيمة، وله 79 قمرًا"
-      }, {
-        name: "زحل",
-        radius: 2,
-        distance: 45,
-        speed: 0.0015,
-        tilt: 26.7,
-        rotation: 0.09,
-        texture: "saturn.jpg",
-        info: "القطر: 116,460 كيلومتر\nالكتلة: 5.68 × 10²⁶ كيلوغرام\nالمدار: 29.46 سنة\nدرجة حرارة السطح: -184°C\nيتميز بحلقاته الشهيرة\nعملاق غازي، وله 83 قمرًا في مدارات مختلفة"
-      }, {
-        name: "أورانوس",
-        radius: 1.5,
-        distance: 55,
-        speed: 0.0008,
-        tilt: 97.8,
-        rotation: 0.06,
-        texture: "uranus.jpg",
-        info: "القطر: 50,724 كيلومتر\nالكتلة: 8.68 × 10²⁵ كيلوغرام\nالمدار: 84 سنة\nدرجة حرارة السطح: -224°C\nعملاق جليدي\nيدور بشكل جانبي، يمتلك حلقات باهتة، وله 27 قمرًا"
-      }, {
-        name: "نبتون",
-        radius: 1.5,
-        distance: 65,
-        speed: 0.0006,
-        tilt: 28.3,
-        rotation: 0.07,
-        texture: "neptune.jpg",
-        info: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -201°C\nعملاق جليدي\nيتميز بلونه الأزرق العميق، يمتلك أقوى الرياح في المجموعة الشمسية، وله 14 قمرًا"
-      }];
-// Planet Meshes and Circular Orbits
-const planetMeshes = [];
-planets.forEach((planet) => {
-  const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
-  
-  // Create the material
-  const material = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    emissive: planet.name === "الشمس" ? 0xffff00 : 0x000000, // Set emissive to yellow for Sun, black for others
-    emissiveIntensity: planet.name === "الشمس" ? 1.5 : 0, // Higher intensity for Sun
-  });
+      const planets = [
+        {
+          name: "الشمس",
+          radius: 5,
+          distance: 0,
+          speed: 0,
+          tilt: 0,
+          rotation: 0.01,
+          texture: "sun.jpg",
+          info: "القطر: 1.391 مليون كيلومتر\nالكتلة: 1.989 × 10³⁰ كيلوغرام\nالعمر: 4.6 مليار سنة\nالنوع: نجم من النوع G في التسلسل الرئيسي."
+        },
+        {
+          name: "عطارد",
+          radius: 0.5,
+          distance: 10,
+          speed: 0.02,
+          tilt: 0.034,
+          rotation: 0.003,
+          texture: "mercury.jpg",
+          info: "القطر: 4,879 كيلومتر\nالكتلة: 3.3 × 10²³ كيلوغرام\nالمدار: 88 يومًا\nدرجة حرارة السطح: من -173°C إلى 427°C\nلا يحتوي على غلاف جوي."
+        },
+        {
+          name: "الزهرة",
+          radius: 0.8,
+          distance: 15,
+          speed: 0.007,
+          tilt: 177.4,
+          rotation: 0.0004,
+          texture: "venus.jpg",
+          info: "القطر: 12,104 كيلومتر\nالكتلة: 4.87 × 10²⁴ كيلوغرام\nالمدار: 225 يومًا\nدرجة حرارة السطح: 464°C\nغلاف جوي كثيف مكون من ثاني أكسيد الكربون."
+        },
+        {
+          name: "الأرض",
+          radius: 1,
+          distance: 20,
+          speed: 0.005,
+          tilt: 23.5,
+          rotation: 0.05,
+          texture: "earth.jpg",
+          info: "القطر: 12,742 كيلومتر\nالكتلة: 5.97 × 10²⁴ كيلوغرام\nالمدار: 365.25 يومًا\nدرجة حرارة السطح: من -88°C إلى 58°C\nمغطى بالمياه والحياة."
+        },
+        {
+          name: "المريخ",
+          radius: 0.7,
+          distance: 25,
+          speed: 0.004,
+          tilt: 25.2,
+          rotation: 0.048,
+          texture: "mars.jpg",
+          info: "القطر: 6,792 كيلومتر\nالكتلة: 6.42 × 10²³ كيلوغرام\nالمدار: 687 يومًا\nدرجة حرارة السطح: من -153°C إلى 20°C\nغلاف جوي رقيق."
+        },
+        {
+          name: "المشتري",
+          radius: 2.5,
+          distance: 35,
+          speed: 0.002,
+          tilt: 3.1,
+          rotation: 0.1,
+          texture: "jupiter.jpg",
+          info: "القطر: 139,820 كيلومتر\nالكتلة: 1.898 × 10²⁷ كيلوغرام\nالمدار: 11.86 سنة\nدرجة حرارة السطح: -145°C\nعملاق غازي\nأكبر كوكب في النظام الشمسي."
+        },
+        {
+          name: "زحل",
+          radius: 2,
+          distance: 45,
+          speed: 0.0015,
+          tilt: 26.7,
+          rotation: 0.09,
+          texture: "saturn.jpg",
+          info: "القطر: 116,460 كيلومتر\nالكتلة: 5.68 × 10²⁶ كيلوغرام\nالمدار: 29.46 سنة\nدرجة حرارة السطح: -184°C\nيتميز بحلقاته الشهيرة المكونة من الجليد والصخور."
+        },
+        {
+          name: "أورانوس",
+          radius: 1.5,
+          distance: 55,
+          speed: 0.0008,
+          tilt: 97.8,
+          rotation: 0.06,
+          texture: "uranus.jpg",
+          info: "القطر: 50,724 كيلومتر\nالكتلة: 8.68 × 10²⁵ كيلوغرام\nالمدار: 84 سنة\nدرجة حرارة السطح: -224°C\nعملاق جليدي\nيدور على جانبه."
+        },
+        {
+          name: "نبتون",
+          radius: 1.5,
+          distance: 65,
+          speed: 0.0006,
+          tilt: 28.3,
+          rotation: 0.07,
+          texture: "neptune.jpg",
+          info: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -201°C\nعملاق جليدي\nيتسم بالرياح السريعة والعواصف."
+        }
+      ];
 
-  loader.load(`textures/${planet.texture}`, (texture) => {
-    material.map = texture;
+      // Planet Meshes and Circular Orbits
+      const planetMeshes = [];
+      planets.forEach((planet) => {
+        const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
+        const material = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          emissive: planet.name === "الشمس" ? 0xffff00 : 0x000000,
+          emissiveIntensity: planet.name === "الشمس" ? 1.5 : 0,
+        });
 
-    // Special treatment for the Sun
-    if (planet.name === "الشمس") {
-      material.emissive = new THREE.Color(0xffff00); // Set to bright yellow glow
-      material.emissiveIntensity = 1.5; // Boost brightness for the Sun
-    }
+        loader.load(`textures/${planet.texture}`, (texture) => {
+          material.map = texture;
+          if (planet.name === "الشمس") {
+            material.emissive = new THREE.Color(0xffff00);
+            material.emissiveIntensity = 1.5;
+          }
+          material.needsUpdate = true;
+        }, undefined, (err) => console.error(`Error loading texture: ${planet.texture}`, err));
 
-    material.needsUpdate = true;
-  }, undefined, (err) => console.error(`Error loading texture: ${planet.texture}`, err));
-
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.x = planet.distance;
-  mesh.rotation.x = planet.tilt * Math.PI / 180;
-  scene.add(mesh);
-});
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.x = planet.distance;
+        mesh.rotation.x = planet.tilt * Math.PI / 180;
+        scene.add(mesh);
 
         // Circular Orbit Path
         if (planet.distance > 0) {
@@ -243,31 +240,29 @@ planets.forEach((planet) => {
           orbit.rotation.x = Math.PI / 2;
           scene.add(orbit);
         }
-        planetMeshes.push({
-          mesh,
-          planet,
-          angle: 0
-        });
+
+        planetMeshes.push({ mesh, planet, angle: 0 });
       });
+
       // Saturn's Rings
       const ringTexture = new THREE.TextureLoader().load("textures/saturn_ring.png");
-      const ringGeometry = new THREE.RingGeometry(2.5, 4, 64); // Increase segments for smoother look
+      const ringGeometry = new THREE.RingGeometry(2.5, 4, 64);
       const ringMaterial = new THREE.MeshStandardMaterial({
         map: ringTexture,
-        transparent: true, // Enable transparency if the texture has a transparent background
+        transparent: true,
         side: THREE.DoubleSide
       });
       const rings = new THREE.Mesh(ringGeometry, ringMaterial);
       rings.rotation.x = Math.PI / 2;
       planetMeshes[6].mesh.add(rings);
+
       // Jupiter's Great Red Spot
       const spotGeometry = new THREE.SphereGeometry(0.3, 16, 16);
-      const spotMaterial = new THREE.MeshStandardMaterial({
-        color: 0xcc3300
-      });
+      const spotMaterial = new THREE.MeshStandardMaterial({ color: 0xcc3300 });
       const redSpot = new THREE.Mesh(spotGeometry, spotMaterial);
       redSpot.position.set(2.5, 0, 0);
       planetMeshes[5].mesh.add(redSpot);
+
       // Asteroid Belt
       const asteroidGeometry = new THREE.BufferGeometry();
       const asteroidCount = 1000;
@@ -280,26 +275,22 @@ planets.forEach((planet) => {
         asteroidPos[i * 3 + 2] = Math.sin(angle) * radius;
       }
       asteroidGeometry.setAttribute('position', new THREE.BufferAttribute(asteroidPos, 3));
-      const asteroidMaterial = new THREE.PointsMaterial({
-        color: 0x888888,
-        size: 0.1
-      });
+      const asteroidMaterial = new THREE.PointsMaterial({ color: 0x888888, size: 0.1 });
       const asteroids = new THREE.Points(asteroidGeometry, asteroidMaterial);
       scene.add(asteroids);
+
       // Comet with Tail
       const cometGeometry = new THREE.SphereGeometry(0.2, 16, 16);
-      const cometMaterial = new THREE.MeshStandardMaterial({
-        color: 0x88ccff
-      });
+      const cometMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff });
       const comet = new THREE.Mesh(cometGeometry, cometMaterial);
       scene.add(comet);
-      const tailGeometry = new THREE.IcosahedronGeometry(0.5, 2); // Smaller size and low detail
+
+      const tailGeometry = new THREE.IcosahedronGeometry(0.5, 2);
       const vertices = tailGeometry.attributes.position.array;
       for (let i = 0; i < vertices.length; i += 3) {
-        // Apply random jitter to each vertex
-        vertices[i] += Math.random() * 0.2 - 0.1; // x-axis
-        vertices[i + 1] += Math.random() * 0.2 - 0.1; // y-axis
-        vertices[i + 2] += Math.random() * 0.2 - 0.1; // z-axis
+        vertices[i] += Math.random() * 0.2 - 0.1;
+        vertices[i + 1] += Math.random() * 0.2 - 0.1;
+        vertices[i + 2] += Math.random() * 0.2 - 0.1;
       }
       tailGeometry.attributes.position.needsUpdate = true;
       const tailMaterial = new THREE.MeshStandardMaterial({
@@ -311,6 +302,7 @@ planets.forEach((planet) => {
       tail.rotation.x = Math.PI;
       tail.position.z = -1.5;
       comet.add(tail);
+
       // Dust Particles
       const dustGeometry = new THREE.BufferGeometry();
       const dustCount = 2000;
@@ -329,6 +321,7 @@ planets.forEach((planet) => {
       });
       const dust = new THREE.Points(dustGeometry, dustMaterial);
       scene.add(dust);
+
       // Raycasting for Click Detection
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
@@ -336,52 +329,48 @@ planets.forEach((planet) => {
       const planetName = document.getElementById('planetName');
       const planetInfo = document.getElementById('planetInfo');
       const closeBtn = document.getElementById('closeBtn');
+
       window.addEventListener('click', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
-            if (intersects.length > 0) {
-              const planet = intersects[0].object;
-              const data = planetMeshes.find(p => p.mesh === planet).planet;
-              planetName.textContent = data.name;
-              planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
-                infoPanel.style.display = 'block';
-              }
-            }); closeBtn.addEventListener('click', () => {
-            infoPanel.style.display = 'none';
-          });
-          // Animation Loop with Circular Orbits
-          function animate() {
-            requestAnimationFrame(animate);
-            planetMeshes.forEach((planet) => {
-              const {
-                mesh,
-                planet: data
-              } = planet;
-              if (data.distance > 0) {
-                // Update angle for circular orbit
-                planet.angle += data.speed;
-                mesh.position.x = Math.cos(planet.angle) * data.distance;
-                mesh.position.z = Math.sin(planet.angle) * data.distance;
-              }
-              mesh.rotation.y += data.rotation; // Self-rotation
-            });
-            // Comet Animation (elliptical for variety)
-            const cometAngle = Date.now() * 0.0005;
-            comet.position.x = Math.cos(cometAngle) * 80;
-            comet.position.z = Math.sin(cometAngle) * 80;
-            comet.position.y = Math.sin(cometAngle * 2) * 20;
-            controls.update();
-            renderer.render(scene, camera);
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
+        if (intersects.length > 0) {
+          const planet = intersects[0].object;
+          const data = planetMeshes.find(p => p.mesh === planet).planet;
+          planetName.textContent = data.name;
+          planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
+          infoPanel.style.display = 'block';
+        }
+      });
+
+      closeBtn.addEventListener('click', () => {
+        infoPanel.style.display = 'none';
+      });
+
+      // Animation Loop with Circular Orbits
+      function animate() {
+        requestAnimationFrame(animate);
+        planetMeshes.forEach((planet) => {
+          const { mesh, planet: data } = planet;
+          if (data.distance > 0) {
+            planet.angle += data.speed;
+            mesh.position.x = Math.cos(planet.angle) * data.distance;
+            mesh.position.z = Math.sin(planet.angle) * data.distance;
           }
-          animate();
-          // Responsive Resize
-          window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-          });
+          mesh.rotation.y += data.rotation;
+        });
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Responsive Resize
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
     </script>
   </body>
 </html>
