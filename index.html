@@ -15,50 +15,49 @@
         }
 
         #infoPanel {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 15px;
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    display: none;
-    max-width: 350px;
-    font-size: 14px;
-    font-family: 'Poppins', sans-serif;
-    line-height: 1.6;
-    text-align: right;
-}
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: none;
+            max-width: 350px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            text-align: right;
+        }
 
-#closeBtn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 30px; /* Fixed width */
-    height: 30px; /* Fixed height to make it square */
-    font-size: 18px; /* Adjust font size to fit inside */
-    font-weight: bold;
-    color: #ff4444;
-    cursor: pointer;
-    transition: transform 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-    padding: 0; /* Remove extra padding */
-    background: transparent;
-    border: none;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center; /* Center the 'X' inside the square */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Centered shadow */
-}
+        #closeBtn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff4444;
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+        }
 
-
-#closeBtn:hover {
-    color: #ff6666; /* Slightly lighter red */
-    transform: scale(1.15); /* Slightly increase the size */
-    background: rgba(255, 255, 255, 0.2); /* Light background on hover */
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5); /* Larger and more pronounced shadow on hover */
-}
+        #closeBtn:hover {
+            color: #ff6666;
+            transform: scale(1.15);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+        }
 
     </style>
 </head>
@@ -169,22 +168,18 @@
             });
 
             loader.load(
-    `textures/${planet.texture}`,
-    (texture) => {
-        material.map = texture;
-        
-        // Special treatment for the Sun
-        if (planet.name === "Sun") {
-            material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
-            material.emissiveIntensity = 1.5; // Boost brightness
-        }
-
-        material.needsUpdate = true;
-    },
-    undefined,
-    (err) => console.error(`Error loading texture: ${planet.texture}`, err)
-);
-
+                `textures/${planet.texture}`,
+                (texture) => {
+                    material.map = texture;
+                    if (planet.name === "Sun") {
+                        material.emissive = new THREE.Color(0xffff00);
+                        material.emissiveIntensity = 1.5;
+                    }
+                    material.needsUpdate = true;
+                },
+                undefined,
+                (err) => console.error(`Error loading texture: ${planet.texture}`, err)
+            );
 
             const mesh = new THREE.Mesh(geometry, material);
             mesh.position.x = planet.distance;
@@ -204,149 +199,48 @@
         });
 
         // Saturn's Rings
-        const ringTexture = new THREE.TextureLoader().load("textures/saturn_ring.png");
+        const ringGeometry = new THREE.RingGeometry(2.7, 3.3, 128);
+        const ringMaterial = new THREE.MeshBasicMaterial({ color: 0xdddddd, side: THREE.DoubleSide });
+        const saturnRings = new THREE.Mesh(ringGeometry, ringMaterial);
+        saturnRings.rotation.x = Math.PI / 2;
+        scene.add(saturnRings);
 
-const ringGeometry = new THREE.RingGeometry(2.5, 4, 64); // Increase segments for smoother look
-const ringMaterial = new THREE.MeshStandardMaterial({ 
-    map: ringTexture,
-    transparent: true,  // Enable transparency if the texture has a transparent background
-    side: THREE.DoubleSide 
-});
+        // Event Listener for Info Panel
+        const infoPanel = document.getElementById("infoPanel");
+        const planetName = document.getElementById("planetName");
+        const planetInfo = document.getElementById("planetInfo");
+        const closeBtn = document.getElementById("closeBtn");
 
-const rings = new THREE.Mesh(ringGeometry, ringMaterial);
-rings.rotation.x = Math.PI / 2;
-planetMeshes[6].mesh.add(rings);
-
-
-        // Jupiter's Great Red Spot
-        const spotGeometry = new THREE.SphereGeometry(0.3, 16, 16);
-        const spotMaterial = new THREE.MeshStandardMaterial({ color: 0xcc3300 });
-        const redSpot = new THREE.Mesh(spotGeometry, spotMaterial);
-        redSpot.position.set(2.5, 0, 0);
-        planetMeshes[5].mesh.add(redSpot);
-
-        // Asteroid Belt
-        const asteroidGeometry = new THREE.BufferGeometry();
-        const asteroidCount = 1000;
-        const asteroidPos = new Float32Array(asteroidCount * 3);
-        for (let i = 0; i < asteroidCount; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const radius = 27 + Math.random() * 5;
-            asteroidPos[i * 3] = Math.cos(angle) * radius;
-            asteroidPos[i * 3 + 1] = (Math.random() - 0.5) * 0.5;
-            asteroidPos[i * 3 + 2] = Math.sin(angle) * radius;
+        function showInfo(planet) {
+            planetName.textContent = planet.name;
+            planetInfo.textContent = planet.info;
+            infoPanel.style.display = "block";
         }
-        asteroidGeometry.setAttribute('position', new THREE.BufferAttribute(asteroidPos, 3));
-        const asteroidMaterial = new THREE.PointsMaterial({ color: 0x888888, size: 0.1 });
-        const asteroids = new THREE.Points(asteroidGeometry, asteroidMaterial);
-        scene.add(asteroids);
 
-        // Comet with Tail
-        // Comet Nucleus (Head)
-const nucleusGeometry = new THREE.SphereGeometry(1, 16, 16); // Sphere for the nucleus
-const nucleusMaterial = new THREE.MeshStandardMaterial({
-  color: 0x88ccff, // Light blue color for the comet
-  emissive: 0x55aaff, // Slight emissive glow
-  emissiveIntensity: 1.5, // Increase intensity for glow
-  roughness: 0.8, // Rough surface
-  metalness: 0.2, // A little metallic
-});
-const nucleus = new THREE.Mesh(nucleusGeometry, nucleusMaterial);
-scene.add(nucleus);
-
-// Create Comet Tail (Better Tail)
-const tailLength = 8;  // Length of the tail
-const tailGeometry = new THREE.CylinderGeometry(0.1, 0.5, tailLength, 16, 4); // Use CylinderGeometry for a better tail
-const tailMaterial = new THREE.MeshStandardMaterial({
-  color: 0x88ccff, // Same color as the comet
-  transparent: true,
-  opacity: 0.6, // Make the tail slightly transparent
-  emissive: 0x88ccff, // Glowing effect for the tail
-  emissiveIntensity: 0.8,
-});
-const tail = new THREE.Mesh(tailGeometry, tailMaterial);
-tail.rotation.x = Math.PI / 2; // Rotate the tail to align properly
-tail.position.set(0, 0, -nucleusGeometry.parameters.radius - tailLength / 2); // Position tail behind nucleus
-nucleus.add(tail); // Attach the tail to the nucleus
-
-// Keep comet position static initially
-nucleus.position.set(Math.random() * 100 - 50, Math.random() * 50 - 25, Math.random() * 100 - 50);
-
-
-        // Dust Particles
-        const dustGeometry = new THREE.BufferGeometry();
-        const dustCount = 2000;
-        const dustPos = new Float32Array(dustCount * 3);
-        for (let i = 0; i < dustCount; i++) {
-            dustPos[i * 3] = (Math.random() - 0.5) * 150;
-            dustPos[i * 3 + 1] = (Math.random() - 0.5) * 150;
-            dustPos[i * 3 + 2] = (Math.random() - 0.5) * 150;
-        }
-        dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
-        const dustMaterial = new THREE.PointsMaterial({ color: 0x666666, size: 0.05, transparent: true, opacity: 0.3 });
-        const dust = new THREE.Points(dustGeometry, dustMaterial);
-        scene.add(dust);
-
-        // Raycasting for Click Detection
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        const infoPanel = document.getElementById('infoPanel');
-        const planetName = document.getElementById('planetName');
-        const planetInfo = document.getElementById('planetInfo');
-        const closeBtn = document.getElementById('closeBtn');
-
-        window.addEventListener('click', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
-
-            if (intersects.length > 0) {
-                const planet = intersects[0].object;
-                const data = planetMeshes.find(p => p.mesh === planet).planet;
-                planetName.textContent = data.name;
-                planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
-                infoPanel.style.display = 'block';
-            }
+        closeBtn.addEventListener("click", () => {
+            infoPanel.style.display = "none";
         });
 
-        closeBtn.addEventListener('click', () => {
-            infoPanel.style.display = 'none';
+        planetMeshes.forEach(({ mesh, planet }) => {
+            mesh.addEventListener("click", () => showInfo(planet));
         });
 
-        // Animation Loop with Circular Orbits
+        // Animation Loop
         function animate() {
             requestAnimationFrame(animate);
 
-            planetMeshes.forEach((planet) => {
-                const { mesh, planet: data } = planet;
-                if (data.distance > 0) {
-                    // Update angle for circular orbit
-                    planet.angle += data.speed;
-                    mesh.position.x = Math.cos(planet.angle) * data.distance;
-                    mesh.position.z = Math.sin(planet.angle) * data.distance;
-                }
-                mesh.rotation.y += data.rotation; // Self-rotation
+            planetMeshes.forEach(({ mesh, planet, angle }) => {
+                angle += planet.speed;
+                mesh.position.x = planet.distance * Math.cos(angle);
+                mesh.position.z = planet.distance * Math.sin(angle);
+                mesh.rotation.y += planet.rotation;
             });
-
-            // Comet Animation (elliptical for variety)
-            const cometAngle = Date.now() * 0.0005;
-            comet.position.x = Math.cos(cometAngle) * 80;
-            comet.position.z = Math.sin(cometAngle) * 80;
-            comet.position.y = Math.sin(cometAngle * 2) * 20;
 
             controls.update();
             renderer.render(scene, camera);
         }
-        animate();
 
-        // Responsive Resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        animate();
     </script>
 </body>
 
