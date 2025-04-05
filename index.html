@@ -2,224 +2,323 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FalakZoom</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
-    rel="stylesheet"
-  />
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: black;
-      font-family: Arial, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FalakZoom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            font-family: Arial, sans-serif;
+        }
 
-    #infoPanel {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      padding: 15px;
-      border-radius: 8px;
-      border: 2px solid rgba(255, 255, 255, 0.5);
-      display: none;
-      max-width: 350px;
-      font-size: 14px;
-      font-family: "Poppins", sans-serif;
-      line-height: 1.6;
-      text-align: right;
-    }
+        #infoPanel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    display: none;
+    max-width: 350px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    text-align: right;
+}
 
-    #closeBtn {
-      position: absolute;
-      top: 5px;
-      left: 5px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #ff4444;
-      cursor: pointer;
-      transition: transform 0.2s ease, color 0.2s ease;
-      padding: 5px;
-      background: transparent;
-      border: none;
-      border-radius: 5px;
-    }
+#closeBtn {
+    position: absolute;
+    top: 5px;
+    left: 5px;  /* Move the close button to the left side */
+    font-size: 20px; /* Modern font size */
+    font-weight: bold;
+    color: #ff4444; /* Bright red */
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease; /* Smooth animation */
+    padding: 5px;
+    background: transparent;
+    border: none;
+    border-radius: 5px;
+}
 
-    #closeBtn:hover {
-      color: #ff6666;
-      transform: scale(1.2);
-      background: rgba(255, 255, 255, 0.2);
-    }
-  </style>
+#closeBtn:hover {
+    color: #ff6666; /* Slightly lighter red on hover */
+    transform: scale(1.2); /* Slight grow effect */
+    background: rgba(255, 255, 255, 0.2); /* Light background on hover */
+}
+
+    </style>
 </head>
 
 <body>
-  <div id="infoPanel">
-    <span id="closeBtn">X</span>
-    <h2 id="planetName"></h2>
-    <p id="planetInfo"></p>
-  </div>
+    <div id="infoPanel">
+        <span id="closeBtn">X</span>
+        <h2 id="planetName"></h2>
+        <p id="planetInfo"></p>
+    </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
 
-  <script>
-    // Scene setup
-    const scene = new THREE.Scene();
+    <script>
+        // Scene Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 50, 100);
 
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
-    camera.position.set(0, 50, 150);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+        // Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
 
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.1;
+        // Advanced Lighting
+        const sunLight = new THREE.PointLight(0xffffff, 3, 1000);
+        sunLight.position.set(0, 0, 0);
+        scene.add(sunLight);
 
-    // Light
-    const light = new THREE.PointLight(0xffffff, 1.5);
-    scene.add(light);
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambientLight);
 
-    // Sun
-    const sunGeometry = new THREE.SphereGeometry(10, 32, 32);
-    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-    scene.add(sun);
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.3);
+        hemiLight.position.set(0, 100, 0);
+        scene.add(hemiLight);
 
-    // Planets data
-    const planetData = [
-      { name: "Mercury", color: 0xaaaaaa, distance: 15, size: 1.2, speed: 0.02, rotation: 0.02, info: "Mercury is the closest planet to the Sun." },
-      { name: "Venus", color: 0xffcc99, distance: 22, size: 2.5, speed: 0.015, rotation: 0.01, info: "Venus has a thick, toxic atmosphere." },
-      { name: "Earth", color: 0x3399ff, distance: 30, size: 2.5, speed: 0.012, rotation: 0.02, info: "Earth is our home planet with abundant life." },
-      { name: "Mars", color: 0xff3300, distance: 38, size: 2.0, speed: 0.01, rotation: 0.018, info: "Mars is known as the Red Planet." },
-      { name: "Jupiter", color: 0xff9966, distance: 52, size: 5, speed: 0.008, rotation: 0.03, info: "Jupiter is the largest planet in our solar system." },
-      { name: "Saturn", color: 0xffffcc, distance: 70, size: 4.5, speed: 0.006, rotation: 0.025, info: "Saturn has beautiful rings made of ice and rock." },
-      { name: "Uranus", color: 0x66ffff, distance: 85, size: 3.5, speed: 0.004, rotation: 0.02, info: "Uranus rotates on its side." },
-      { name: "Neptune", color: 0x3333ff, distance: 100, size: 3.5, speed: 0.003, rotation: 0.02, info: "Neptune is known for its intense blue color." }
-    ];
+        // Texture Loader
+        const loader = new THREE.TextureLoader();
 
-    const planetMeshes = [];
-
-    planetData.forEach((planet, i) => {
-      const geometry = new THREE.SphereGeometry(planet.size, 32, 32);
-      const material = new THREE.MeshStandardMaterial({ color: planet.color });
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.x = planet.distance;
-      scene.add(mesh);
-      planet.angle = Math.random() * Math.PI * 2;
-      planetMeshes.push({ mesh, planet });
-    });
-
-    // Comet
-    const cometGeometry = new THREE.SphereGeometry(0.8, 16, 16);
-    const cometMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const comet = new THREE.Mesh(cometGeometry, cometMaterial);
-    scene.add(comet);
-
-    // Raycaster
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    const planetName = document.getElementById("planetName");
-    const planetInfo = document.getElementById("planetInfo");
-    const infoPanel = document.getElementById("infoPanel");
-    const closeBtn = document.getElementById("closeBtn");
-
-    closeBtn.addEventListener("click", () => {
-      infoPanel.style.display = "none";
-    });
-
-    // Smooth Camera Zoom Variables
-    let zoomTarget = null;
-    let zoomProgress = 0;
-    let zoomDuration = 60; // frames
-    let startPosition = new THREE.Vector3();
-    let startLookAt = new THREE.Vector3();
-    let endPosition = new THREE.Vector3();
-    let endLookAt = new THREE.Vector3();
-
-    function lerp(a, b, t) {
-      return a.clone().multiplyScalar(1 - t).add(b.clone().multiplyScalar(t));
-    }
-
-    window.addEventListener("click", (event) => {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
-
-      if (intersects.length > 0) {
-        const planet = intersects[0].object;
-        const data = planetMeshes.find(p => p.mesh === planet).planet;
-        planetName.textContent = data.name;
-        planetInfo.innerHTML = data.info.replace(/\n/g, "<br>");
-        infoPanel.style.display = "block";
-
-        // Start camera zoom
-        zoomTarget = planet;
-        zoomProgress = 0;
-        startPosition.copy(camera.position);
-        startLookAt = controls.target.clone();
-
-        const planetWorldPosition = new THREE.Vector3();
-        planet.getWorldPosition(planetWorldPosition);
-
-        endLookAt.copy(planetWorldPosition);
-        const offset = new THREE.Vector3(0, data.size * 3, data.size * 5);
-        endPosition.copy(planetWorldPosition.clone().add(offset));
-      }
-    });
-
-    function animate() {
-      requestAnimationFrame(animate);
-
-      planetMeshes.forEach(({ mesh, planet }) => {
-        if (planet.distance > 0) {
-          mesh.position.x = Math.cos(planet.angle) * planet.distance;
-          mesh.position.z = Math.sin(planet.angle) * planet.distance;
-          planet.angle += planet.speed;
+        // Starry Background
+        const starGeometry = new THREE.BufferGeometry();
+        const starCount = 5000;
+        const positions = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 2000;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
         }
-        mesh.rotation.y += planet.rotation;
-      });
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
 
-      const cometAngle = Date.now() * 0.0005;
-      comet.position.x = Math.cos(cometAngle) * 80;
-      comet.position.z = Math.sin(cometAngle) * 80;
-      comet.position.y = Math.sin(cometAngle * 2) * 20;
+        // Planets Data with Detailed Information
+        const planets = [
+            {
+                name: "الشمس", radius: 5, distance: 0, speed: 0, tilt: 0, rotation: 0.01, texture: "sun.jpg",
+                info: "القطر: 1.391 مليون كيلومتر\nالكتلة: 1.989 × 10³⁰ كيلوغرام\nالعمر: 4.6 مليار سنة\nالنوع: نجم من النوع G في التسلسل الرئيسي\nدرجة حرارة النواة: 15 مليون درجة مئوية\nيحتوي على 99.86% من كتلة النظام الشمسي"
+            },
+            {
+                name: "عطارد", radius: 0.5, distance: 10, speed: 0.02, tilt: 0.034, rotation: 0.003, texture: "mercury.jpg",
+                info: "القطر: 4,879 كيلومتر\nالكتلة: 3.3 × 10²³ كيلوغرام\nالمدار: 88 يومًا\nدرجة حرارة السطح: من -173°C إلى 427°C\nلا يحتوي على غلاف جوي\nأصغر كواكب المجموعة الشمسية، كوكب صخري مليء بالفوهات"
+            },
+            {
+                name: "الزهرة", radius: 0.8, distance: 15, speed: 0.007, tilt: 177.4, rotation: 0.0004, texture: "venus.jpg",
+                info: "القطر: 12,104 كيلومتر\nالكتلة: 4.87 × 10²⁴ كيلوغرام\nالمدار: 225 يومًا\nدرجة حرارة السطح: 464°C\nغلاف جوي كثيف من ثاني أكسيد الكربون\nأسخن كواكب المجموعة الشمسية، يدور بعكس اتجاه الدوران المعتاد (حركة تراجعية)"
+            },
+            {
+                name: "الأرض", radius: 1, distance: 20, speed: 0.005, tilt: 23.5, rotation: 0.05, texture: "earth.jpg",
+                info: "القطر: 12,742 كيلومتر\nالكتلة: 5.97 × 10²⁴ كيلوغرام\nالمدار: 365.25 يومًا\nدرجة حرارة السطح: من -88°C إلى 58°C\nمغطاة بنسبة 71% بالمياه\nالكوكب الوحيد المعروف بوجود الحياة، وله قمر واحد"
+            },
+            {
+                name: "المريخ", radius: 0.7, distance: 25, speed: 0.004, tilt: 25.2, rotation: 0.048, texture: "mars.jpg",
+                info: "القطر: 6,792 كيلومتر\nالكتلة: 6.42 × 10²³ كيلوغرام\nالمدار: 687 يومًا\nدرجة حرارة السطح: من -153°C إلى 20°C\nغلاف جوي رقيق من ثاني أكسيد الكربون\nيظهر باللون الأحمر بسبب أكسيد الحديد، وله قمران"
+            },
+            {
+                name: "المشتري", radius: 2.5, distance: 35, speed: 0.002, tilt: 3.1, rotation: 0.1, texture: "jupiter.jpg",
+                info: "القطر: 139,820 كيلومتر\nالكتلة: 1.898 × 10²⁷ كيلوغرام\nالمدار: 11.86 سنة\nدرجة حرارة السطح: -145°C\nعملاق غازي\nأكبر كواكب المجموعة الشمسية، يحتوي على البقعة الحمراء العظيمة، وله 79 قمرًا"
+            },
+            {
+                name: "زحل", radius: 2, distance: 45, speed: 0.0015, tilt: 26.7, rotation: 0.09, texture: "saturn.jpg",
+                info: "القطر: 116,460 كيلومتر\nالكتلة: 5.68 × 10²⁶ كيلوغرام\nالمدار: 29.46 سنة\nدرجة حرارة السطح: -184°C\nيتميز بحلقاته الشهيرة\nعملاق غازي، وله 83 قمرًا في مدارات مختلفة"
+            },
+            {
+                name: "أورانوس", radius: 1.5, distance: 55, speed: 0.0008, tilt: 97.8, rotation: 0.06, texture: "uranus.jpg",
+                info: "القطر: 50,724 كيلومتر\nالكتلة: 8.68 × 10²⁵ كيلوغرام\nالمدار: 84 سنة\nدرجة حرارة السطح: -224°C\nعملاق جليدي\nيدور بشكل جانبي، يمتلك حلقات باهتة، وله 27 قمرًا"
+            },
+            {
+                name: "نبتون", radius: 1.5, distance: 65, speed: 0.0006, tilt: 28.3, rotation: 0.07, texture: "neptune.jpg",
+                info: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -201°C\nعملاق جليدي\nيتميز بلونه الأزرق العميق، يمتلك أقوى الرياح في المجموعة الشمسية، وله 14 قمرًا"
+            }
+        ];
 
-      // Smooth camera zoom animation
-      if (zoomTarget && zoomProgress < 1) {
-        zoomProgress += 1 / zoomDuration;
-        const t = Math.min(zoomProgress, 1);
-        camera.position.copy(lerp(startPosition, endPosition, t));
-        controls.target.copy(lerp(startLookAt, endLookAt, t));
-        controls.update();
-      }
+        // Planet Meshes and Circular Orbits
+        const planetMeshes = [];
+        planets.forEach((planet) => {
+            const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
+                emissiveIntensity: planet.name === "Sun" ? 2 : 0
+            });
 
-      controls.update();
-      renderer.render(scene, camera);
-    }
+            loader.load(
+    `textures/${planet.texture}`,
+    (texture) => {
+        material.map = texture;
+        
+        // Special treatment for the Sun
+        if (planet.name === "Sun") {
+            material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
+            material.emissiveIntensity = 1.5; // Boost brightness
+        }
 
-    animate();
+        material.needsUpdate = true;
+    },
+    undefined,
+    (err) => console.error(`Error loading texture: ${planet.texture}`, err)
+);
 
-    window.addEventListener("resize", () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-  </script>
+
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = planet.distance;
+            mesh.rotation.x = planet.tilt * Math.PI / 180;
+            scene.add(mesh);
+
+            // Circular Orbit Path
+            if (planet.distance > 0) {
+                const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 128);
+                const orbitMaterial = new THREE.MeshBasicMaterial({ color: 0x333333, side: THREE.DoubleSide });
+                const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+                orbit.rotation.x = Math.PI / 2;
+                scene.add(orbit);
+            }
+
+            planetMeshes.push({ mesh, planet, angle: 0 });
+        });
+
+        // Saturn's Rings
+        const ringTexture = new THREE.TextureLoader().load("textures/saturn_ring.png");
+
+const ringGeometry = new THREE.RingGeometry(2.5, 4, 64); // Increase segments for smoother look
+const ringMaterial = new THREE.MeshStandardMaterial({ 
+    map: ringTexture,
+    transparent: true,  // Enable transparency if the texture has a transparent background
+    side: THREE.DoubleSide 
+});
+
+const rings = new THREE.Mesh(ringGeometry, ringMaterial);
+rings.rotation.x = Math.PI / 2;
+planetMeshes[6].mesh.add(rings);
+
+
+        // Jupiter's Great Red Spot
+        const spotGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+        const spotMaterial = new THREE.MeshStandardMaterial({ color: 0xcc3300 });
+        const redSpot = new THREE.Mesh(spotGeometry, spotMaterial);
+        redSpot.position.set(2.5, 0, 0);
+        planetMeshes[5].mesh.add(redSpot);
+
+        // Asteroid Belt
+        const asteroidGeometry = new THREE.BufferGeometry();
+        const asteroidCount = 1000;
+        const asteroidPos = new Float32Array(asteroidCount * 3);
+        for (let i = 0; i < asteroidCount; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 27 + Math.random() * 5;
+            asteroidPos[i * 3] = Math.cos(angle) * radius;
+            asteroidPos[i * 3 + 1] = (Math.random() - 0.5) * 0.5;
+            asteroidPos[i * 3 + 2] = Math.sin(angle) * radius;
+        }
+        asteroidGeometry.setAttribute('position', new THREE.BufferAttribute(asteroidPos, 3));
+        const asteroidMaterial = new THREE.PointsMaterial({ color: 0x888888, size: 0.1 });
+        const asteroids = new THREE.Points(asteroidGeometry, asteroidMaterial);
+        scene.add(asteroids);
+
+        // Comet with Tail
+        const cometGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+        const cometMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff });
+        const comet = new THREE.Mesh(cometGeometry, cometMaterial);
+        scene.add(comet);
+        const tailGeometry = new THREE.ConeGeometry(0.5, 3, 16);
+        const tailMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff, transparent: true, opacity: 0.5 });
+        const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+        tail.rotation.x = Math.PI;
+        tail.position.z = -1.5;
+        comet.add(tail);
+
+        // Dust Particles
+        const dustGeometry = new THREE.BufferGeometry();
+        const dustCount = 2000;
+        const dustPos = new Float32Array(dustCount * 3);
+        for (let i = 0; i < dustCount; i++) {
+            dustPos[i * 3] = (Math.random() - 0.5) * 150;
+            dustPos[i * 3 + 1] = (Math.random() - 0.5) * 150;
+            dustPos[i * 3 + 2] = (Math.random() - 0.5) * 150;
+        }
+        dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+        const dustMaterial = new THREE.PointsMaterial({ color: 0x666666, size: 0.05, transparent: true, opacity: 0.3 });
+        const dust = new THREE.Points(dustGeometry, dustMaterial);
+        scene.add(dust);
+
+        // Raycasting for Click Detection
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const infoPanel = document.getElementById('infoPanel');
+        const planetName = document.getElementById('planetName');
+        const planetInfo = document.getElementById('planetInfo');
+        const closeBtn = document.getElementById('closeBtn');
+
+        window.addEventListener('click', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
+
+            if (intersects.length > 0) {
+                const planet = intersects[0].object;
+                const data = planetMeshes.find(p => p.mesh === planet).planet;
+                planetName.textContent = data.name;
+                planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
+                infoPanel.style.display = 'block';
+            }
+        });
+
+        closeBtn.addEventListener('click', () => {
+            infoPanel.style.display = 'none';
+        });
+
+        // Animation Loop with Circular Orbits
+        function animate() {
+            requestAnimationFrame(animate);
+
+            planetMeshes.forEach((planet) => {
+                const { mesh, planet: data } = planet;
+                if (data.distance > 0) {
+                    // Update angle for circular orbit
+                    planet.angle += data.speed;
+                    mesh.position.x = Math.cos(planet.angle) * data.distance;
+                    mesh.position.z = Math.sin(planet.angle) * data.distance;
+                }
+                mesh.rotation.y += data.rotation; // Self-rotation
+            });
+
+            // Comet Animation (elliptical for variety)
+            const cometAngle = Date.now() * 0.0005;
+            comet.position.x = Math.cos(cometAngle) * 80;
+            comet.position.z = Math.sin(cometAngle) * 80;
+            comet.position.y = Math.sin(cometAngle * 2) * 20;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsive Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
 </body>
 
 </html>
