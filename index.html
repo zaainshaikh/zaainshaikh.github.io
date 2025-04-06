@@ -228,15 +228,32 @@
         scene.add(mesh);
         // Circular Orbit Path
         if (planet.distance > 0) {
-          const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 128);
-          const orbitMaterial = new THREE.MeshBasicMaterial({
-            color: 0x333333,
-            side: THREE.DoubleSide
-          });
-          const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
-          orbit.rotation.x = Math.PI / 2;
-          scene.add(orbit);
-        }
+  const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 128);
+  
+  // Choose a color based on the planet's name or index
+  const colorMap = {
+    "عطارد": 0xaaaaaa,
+    "الزهرة": 0xffcc99,
+    "الأرض": 0x3399ff,
+    "المريخ": 0xff3333,
+    "المشتري": 0xffaa33,
+    "زحل": 0xffdd77,
+    "أورانوس": 0x66ccff,
+    "نبتون": 0x3366cc
+  };
+  
+  const orbitMaterial = new THREE.MeshBasicMaterial({
+    color: colorMap[planet.name] || 0xffffff,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.7
+  });
+  
+  const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+  orbit.rotation.x = Math.PI / 2;
+  scene.add(orbit);
+}
+
         planetMeshes.push({
           mesh,
           planet,
