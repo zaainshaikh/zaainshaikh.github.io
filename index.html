@@ -16,7 +16,7 @@
       /* Updated infoPanel position */
       #infoPanel {
         position: absolute;
-        top: 70px; /* Changed from 20px to 70px to account for menu bar */
+        top: 70px;
         left: 20px;
         background: rgba(0, 0, 0, 0.8);
         color: white;
@@ -29,7 +29,7 @@
         font-family: 'Poppins', sans-serif;
         line-height: 1.6;
         text-align: right;
-        z-index: 50; /* Ensure it stays above the scene but below menu */
+        z-index: 50;
       }
 
       #closeBtn {
@@ -66,14 +66,14 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 50px; /* Fixed height */
+        height: 50px;
         background: rgba(0, 0, 0, 0.7);
         padding: 10px 20px;
         box-sizing: border-box;
         display: flex;
-        justify-content: flex-start;
+        justify-content: space-between;
         align-items: center;
-        z-index: 100; /* Higher than info panel */
+        z-index: 100;
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       }
 
@@ -81,7 +81,8 @@
         position: relative;
         color: white;
         padding: 8px 15px;
-        margin-right: 10px;
+        margin-left: auto;
+        margin-right: 20px;
         cursor: pointer;
         font-family: 'Poppins', sans-serif;
         border-radius: 4px;
@@ -95,7 +96,7 @@
       .dropdown {
         position: absolute;
         top: 100%;
-        left: 0;
+        right: 0;
         background: rgba(0, 0, 0, 0.9);
         min-width: 200px;
         border-radius: 0 0 4px 4px;
@@ -124,7 +125,6 @@
         color: white;
         font-family: 'Poppins', sans-serif;
         font-size: 24px;
-        margin-right: 30px;
         font-weight: 600;
       }
     </style>
@@ -170,6 +170,15 @@
       controls.maxDistance = 300;
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
+      
+      // Following variables
+      let focusedPlanetIndex = -1;
+      let isFollowingPlanet = false;
+      
+      controls.addEventListener('start', () => {
+        isFollowingPlanet = false;
+        focusedPlanetIndex = -1;
+      });
       
       // Advanced Lighting
       const sunLight = new THREE.PointLight(0xffffff, 1.5, 1000);
@@ -474,12 +483,15 @@
           const planetIndex = parseInt(item.getAttribute('data-planet'));
           focusOnPlanet(planetIndex);
           planetsDropdown.classList.remove('show');
+          infoPanel.style.display = 'none';
         });
       });
       
       function focusOnPlanet(index) {
         const planet = planetMeshes[index];
         const targetPosition = planet.mesh.position.clone();
+        
+        focusedPlanetIndex = index;
         
         if (index === 0) {
           targetPosition.z += 15;
@@ -506,6 +518,7 @@
           if (progress < 1) {
             requestAnimationFrame(animateCamera);
           } else {
+            isFollowingPlanet = true;
             planetName.textContent = planet.planet.name;
             planetInfo.innerHTML = planet.planet.info.replace(/\n/g, '<br>');
             infoPanel.style.display = 'block';
@@ -518,7 +531,8 @@
       // Animation Loop with Circular Orbits
       function animate() {
         requestAnimationFrame(animate);
-        planetMeshes.forEach((planet) => {
+        
+        planetMeshes.forEach((planet, index) => {
           const { mesh, planet: data } = planet;
           if (data.distance > 0) {
             planet.angle += data.speed;
@@ -526,6 +540,18 @@
             mesh.position.z = Math.sin(planet.angle) * data.distance;
           }
           mesh.rotation.y += data.rotation;
+          
+          if (isFollowingPlanet && index === focusedPlanetIndex) {
+            const targetPosition = mesh.position.clone();
+            if (index === 0) {
+              targetPosition.z += 15;
+            } else {
+              const distance = data.radius * 10;
+              targetPosition.z += distance;
+            }
+            camera.position.copy(targetPosition);
+            camera.lookAt(mesh.position);
+          }
         });
         
         const cometAngle = Date.now() * 0.0005;
@@ -533,7 +559,9 @@
         comet.position.z = Math.sin(cometAngle) * 80;
         comet.position.y = Math.sin(cometAngle * 2) * 20;
         
-        controls.update();
+        if (!isFollowingPlanet) {
+          controls.update();
+        }
         renderer.render(scene, camera);
       }
       
