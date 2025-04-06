@@ -35,41 +35,115 @@
         top: 10px;
         left: 10px;
         width: 30px;
-        /* Fixed width */
         height: 30px;
-        /* Fixed height to make it square */
         font-size: 18px;
-        /* Adjust font size to fit inside */
         font-weight: bold;
         color: #ff4444;
         cursor: pointer;
         transition: transform 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
         padding: 0;
-        /* Remove extra padding */
         background: transparent;
         border: none;
         border-radius: 5px;
         display: flex;
         justify-content: center;
         align-items: center;
-        /* Center the 'X' inside the square */
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-        /* Centered shadow */
       }
 
       #closeBtn:hover {
         color: #ff6666;
-        /* Slightly lighter red */
         transform: scale(1.15);
-        /* Slightly increase the size */
         background: rgba(255, 255, 255, 0.2);
-        /* Light background on hover */
         box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
-        /* Larger and more pronounced shadow on hover */
+      }
+
+      /* Menu Bar Styles */
+      #menuBar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px 20px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        z-index: 100;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .menu-item {
+        position: relative;
+        color: white;
+        padding: 8px 15px;
+        margin-right: 10px;
+        cursor: pointer;
+        font-family: 'Poppins', sans-serif;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+      }
+
+      .menu-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: rgba(0, 0, 0, 0.9);
+        min-width: 200px;
+        border-radius: 0 0 4px 4px;
+        overflow: hidden;
+        display: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      }
+
+      .dropdown.show {
+        display: block;
+      }
+
+      .dropdown-item {
+        padding: 10px 15px;
+        color: white;
+        text-decoration: none;
+        display: block;
+        transition: background 0.2s ease;
+      }
+
+      .dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      #title {
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        font-size: 24px;
+        margin-right: 30px;
+        font-weight: 600;
       }
     </style>
   </head>
   <body>
+    <div id="menuBar">
+      <div id="title">FalakZoom</div>
+      <div class="menu-item" id="planetsMenu">
+        الكواكب
+        <div class="dropdown" id="planetsDropdown">
+          <a href="#" class="dropdown-item" data-planet="0">الشمس</a>
+          <a href="#" class="dropdown-item" data-planet="1">عطارد</a>
+          <a href="#" class="dropdown-item" data-planet="2">الزهرة</a>
+          <a href="#" class="dropdown-item" data-planet="3">الأرض</a>
+          <a href="#" class="dropdown-item" data-planet="4">المريخ</a>
+          <a href="#" class="dropdown-item" data-planet="5">المشتري</a>
+          <a href="#" class="dropdown-item" data-planet="6">زحل</a>
+          <a href="#" class="dropdown-item" data-planet="7">أورانوس</a>
+          <a href="#" class="dropdown-item" data-planet="8">نبتون</a>
+        </div>
+      </div>
+    </div>
     <div id="infoPanel">
       <span id="closeBtn">X</span>
       <h2 id="planetName"></h2>
@@ -87,11 +161,13 @@
       });
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
+      
       // Controls
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.maxDistance = 300; // Adjust this number as needed
+      controls.maxDistance = 300;
       controls.enableDamping = true;
       controls.dampingFactor = 0.05;
+      
       // Advanced Lighting
       const sunLight = new THREE.PointLight(0xffffff, 1.5, 1000);
       sunLight.position.set(0, 0, 0);
@@ -101,8 +177,10 @@
       const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.3);
       hemiLight.position.set(0, 100, 0);
       scene.add(hemiLight);
+      
       // Texture Loader
       const loader = new THREE.TextureLoader();
+      
       // Starry Background
       const starGeometry = new THREE.BufferGeometry();
       const starCount = 5000;
@@ -119,6 +197,7 @@
       });
       const stars = new THREE.Points(starGeometry, starMaterial);
       scene.add(stars);
+      
       // Planets Data with Detailed Information
       const planets = [{
         name: "الشمس",
@@ -202,22 +281,23 @@
         texture: "neptune.jpg",
         info: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -201°C\nعملاق جليدي\nيتميز بلونه الأزرق العميق، يمتلك أقوى الرياح في المجموعة الشمسية، وله 14 قمرًا"
       }];
+      
       // Planet Meshes and Circular Orbits
       const planetMeshes = [];
       planets.forEach((planet) => {
         const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
         const material = new THREE.MeshStandardMaterial({
           color: 0xffffff,
-          emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
-          emissiveIntensity: planet.name === "Sun" ? 2 : 0
+          emissive: planet.name === "الشمس" ? 0xffff00 : 0x000000,
+          emissiveIntensity: planet.name === "الشمس" ? 2 : 0
         });
         loader.load(`textures/${planet.texture}`,
           (texture) => {
             material.map = texture;
             // Special treatment for the Sun
-            if (planet.name === "Sun") {
-              material.emissive = new THREE.Color(0xffff00); // Bright yellow glow
-              material.emissiveIntensity = 1.5; // Boost brightness
+            if (planet.name === "الشمس") {
+              material.emissive = new THREE.Color(0xffff00);
+              material.emissiveIntensity = 1.5;
             }
             material.needsUpdate = true;
           }, undefined,
@@ -226,33 +306,33 @@
         mesh.position.x = planet.distance;
         mesh.rotation.x = planet.tilt * Math.PI / 180;
         scene.add(mesh);
+        
         // Circular Orbit Path
         if (planet.distance > 0) {
-  const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 128);
-  
-  // Choose a color based on the planet's name or index
-  const colorMap = {
-    "عطارد": 0xaaaaaa,
-    "الزهرة": 0xffcc99,
-    "الأرض": 0x3399ff,
-    "المريخ": 0xff3333,
-    "المشتري": 0xffaa33,
-    "زحل": 0xffdd77,
-    "أورانوس": 0x66ccff,
-    "نبتون": 0x3366cc
-  };
-  
-  const orbitMaterial = new THREE.MeshBasicMaterial({
-    color: colorMap[planet.name] || 0xffffff,
-    side: THREE.DoubleSide,
-    transparent: true,
-    opacity: 0.7
-  });
-  
-  const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
-  orbit.rotation.x = Math.PI / 2;
-  scene.add(orbit);
-}
+          const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 128);
+          
+          const colorMap = {
+            "عطارد": 0xaaaaaa,
+            "الزهرة": 0xffcc99,
+            "الأرض": 0x3399ff,
+            "المريخ": 0xff3333,
+            "المشتري": 0xffaa33,
+            "زحل": 0xffdd77,
+            "أورانوس": 0x66ccff,
+            "نبتون": 0x3366cc
+          };
+          
+          const orbitMaterial = new THREE.MeshBasicMaterial({
+            color: colorMap[planet.name] || 0xffffff,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.7
+          });
+          
+          const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+          orbit.rotation.x = Math.PI / 2;
+          scene.add(orbit);
+        }
 
         planetMeshes.push({
           mesh,
@@ -260,17 +340,19 @@
           angle: 0
         });
       });
+      
       // Saturn's Rings
       const ringTexture = new THREE.TextureLoader().load("textures/saturn_ring.png");
-      const ringGeometry = new THREE.RingGeometry(2.5, 4, 64); // Increase segments for smoother look
+      const ringGeometry = new THREE.RingGeometry(2.5, 4, 64);
       const ringMaterial = new THREE.MeshStandardMaterial({
         map: ringTexture,
-        transparent: true, // Enable transparency if the texture has a transparent background
+        transparent: true,
         side: THREE.DoubleSide
       });
       const rings = new THREE.Mesh(ringGeometry, ringMaterial);
       rings.rotation.x = Math.PI / 2;
       planetMeshes[6].mesh.add(rings);
+      
       // Jupiter's Great Red Spot
       const spotGeometry = new THREE.SphereGeometry(0.3, 16, 16);
       const spotMaterial = new THREE.MeshStandardMaterial({
@@ -279,6 +361,7 @@
       const redSpot = new THREE.Mesh(spotGeometry, spotMaterial);
       redSpot.position.set(2.5, 0, 0);
       planetMeshes[5].mesh.add(redSpot);
+      
       // Asteroid Belt
       const asteroidGeometry = new THREE.BufferGeometry();
       const asteroidCount = 1000;
@@ -297,6 +380,7 @@
       });
       const asteroids = new THREE.Points(asteroidGeometry, asteroidMaterial);
       scene.add(asteroids);
+      
       // Comet with Tail
       const cometGeometry = new THREE.SphereGeometry(0.2, 16, 16);
       const cometMaterial = new THREE.MeshStandardMaterial({
@@ -304,13 +388,12 @@
       });
       const comet = new THREE.Mesh(cometGeometry, cometMaterial);
       scene.add(comet);
-      const tailGeometry = new THREE.IcosahedronGeometry(0.5, 2); // Smaller size and low detail
+      const tailGeometry = new THREE.IcosahedronGeometry(0.5, 2);
       const vertices = tailGeometry.attributes.position.array;
       for (let i = 0; i < vertices.length; i += 3) {
-        // Apply random jitter to each vertex
-        vertices[i] += Math.random() * 0.2 - 0.1; // x-axis
-        vertices[i + 1] += Math.random() * 0.2 - 0.1; // y-axis
-        vertices[i + 2] += Math.random() * 0.2 - 0.1; // z-axis
+        vertices[i] += Math.random() * 0.2 - 0.1;
+        vertices[i + 1] += Math.random() * 0.2 - 0.1;
+        vertices[i + 2] += Math.random() * 0.2 - 0.1;
       }
       tailGeometry.attributes.position.needsUpdate = true;
       const tailMaterial = new THREE.MeshStandardMaterial({
@@ -322,6 +405,7 @@
       tail.rotation.x = Math.PI;
       tail.position.z = -1.5;
       comet.add(tail);
+      
       // Dust Particles
       const dustGeometry = new THREE.BufferGeometry();
       const dustCount = 2000;
@@ -340,6 +424,7 @@
       });
       const dust = new THREE.Points(dustGeometry, dustMaterial);
       scene.add(dust);
+      
       // Raycasting for Click Detection
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
@@ -347,52 +432,132 @@
       const planetName = document.getElementById('planetName');
       const planetInfo = document.getElementById('planetInfo');
       const closeBtn = document.getElementById('closeBtn');
+      
       window.addEventListener('click', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
-            if (intersects.length > 0) {
-              const planet = intersects[0].object;
-              const data = planetMeshes.find(p => p.mesh === planet).planet;
-              planetName.textContent = data.name;
-              planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
-                infoPanel.style.display = 'block';
-              }
-            }); closeBtn.addEventListener('click', () => {
-            infoPanel.style.display = 'none';
-          });
-          // Animation Loop with Circular Orbits
-          function animate() {
-            requestAnimationFrame(animate);
-            planetMeshes.forEach((planet) => {
-              const {
-                mesh,
-                planet: data
-              } = planet;
-              if (data.distance > 0) {
-                // Update angle for circular orbit
-                planet.angle += data.speed;
-                mesh.position.x = Math.cos(planet.angle) * data.distance;
-                mesh.position.z = Math.sin(planet.angle) * data.distance;
-              }
-              mesh.rotation.y += data.rotation; // Self-rotation
-            });
-            // Comet Animation (elliptical for variety)
-            const cometAngle = Date.now() * 0.0005;
-            comet.position.x = Math.cos(cometAngle) * 80;
-            comet.position.z = Math.sin(cometAngle) * 80;
-            comet.position.y = Math.sin(cometAngle * 2) * 20;
-            controls.update();
-            renderer.render(scene, camera);
+        // Check if click was on menu bar
+        if (event.clientY < 50) return;
+        
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
+        if (intersects.length > 0) {
+          const planet = intersects[0].object;
+          const data = planetMeshes.find(p => p.mesh === planet).planet;
+          planetName.textContent = data.name;
+          planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
+          infoPanel.style.display = 'block';
+        }
+      });
+      
+      closeBtn.addEventListener('click', () => {
+        infoPanel.style.display = 'none';
+      });
+      
+      // Menu Bar Functionality
+      const planetsMenu = document.getElementById('planetsMenu');
+      const planetsDropdown = document.getElementById('planetsDropdown');
+      
+      // Toggle dropdown when clicking the menu item
+      planetsMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        planetsDropdown.classList.toggle('show');
+      });
+      
+      // Close dropdown when clicking anywhere else
+      document.addEventListener('click', () => {
+        planetsDropdown.classList.remove('show');
+      });
+      
+      // Handle planet selection from dropdown
+      document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          const planetIndex = parseInt(item.getAttribute('data-planet'));
+          focusOnPlanet(planetIndex);
+          planetsDropdown.classList.remove('show');
+        });
+      });
+      
+      // Function to smoothly focus camera on a planet
+      function focusOnPlanet(index) {
+        const planet = planetMeshes[index];
+        const targetPosition = planet.mesh.position.clone();
+        
+        // For the sun, we want to be closer since it's at the center
+        if (index === 0) {
+          targetPosition.z += 15; // Move camera slightly above the sun
+        } else {
+          // For other planets, position the camera at a distance relative to the planet's size
+          const distance = planet.planet.radius * 10;
+          targetPosition.z += distance;
+        }
+        
+        // Set up animation to move camera
+        const startPosition = camera.position.clone();
+        const startTime = Date.now();
+        const duration = 1500; // 1.5 seconds
+        
+        // Animate camera movement
+        function animateCamera() {
+          const elapsed = Date.now() - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Ease in-out function for smooth movement
+          const easeProgress = progress < 0.5 
+            ? 2 * progress * progress 
+            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+          
+          // Interpolate position
+          camera.position.lerpVectors(startPosition, targetPosition, easeProgress);
+          
+          // Make camera look at the planet
+          camera.lookAt(planet.mesh.position);
+          
+          if (progress < 1) {
+            requestAnimationFrame(animateCamera);
+          } else {
+            // Animation complete - show info panel
+            planetName.textContent = planet.planet.name;
+            planetInfo.innerHTML = planet.planet.info.replace(/\n/g, '<br>');
+            infoPanel.style.display = 'block';
           }
-          animate();
-          // Responsive Resize
-          window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-          });
+        }
+        
+        animateCamera();
+      }
+      
+      // Animation Loop with Circular Orbits
+      function animate() {
+        requestAnimationFrame(animate);
+        planetMeshes.forEach((planet) => {
+          const { mesh, planet: data } = planet;
+          if (data.distance > 0) {
+            planet.angle += data.speed;
+            mesh.position.x = Math.cos(planet.angle) * data.distance;
+            mesh.position.z = Math.sin(planet.angle) * data.distance;
+          }
+          mesh.rotation.y += data.rotation;
+        });
+        
+        // Comet Animation
+        const cometAngle = Date.now() * 0.0005;
+        comet.position.x = Math.cos(cometAngle) * 80;
+        comet.position.z = Math.sin(cometAngle) * 80;
+        comet.position.y = Math.sin(cometAngle * 2) * 20;
+        
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      
+      animate();
+      
+      // Responsive Resize
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
     </script>
   </body>
 </html>
