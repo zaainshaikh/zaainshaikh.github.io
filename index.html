@@ -13,9 +13,10 @@
         font-family: Arial, sans-serif;
       }
 
+      /* Updated infoPanel position */
       #infoPanel {
         position: absolute;
-        top: 20px;
+        top: 70px; /* Changed from 20px to 70px to account for menu bar */
         left: 20px;
         background: rgba(0, 0, 0, 0.8);
         color: white;
@@ -28,6 +29,7 @@
         font-family: 'Poppins', sans-serif;
         line-height: 1.6;
         text-align: right;
+        z-index: 50; /* Ensure it stays above the scene but below menu */
       }
 
       #closeBtn {
@@ -64,13 +66,14 @@
         top: 0;
         left: 0;
         width: 100%;
+        height: 50px; /* Fixed height */
         background: rgba(0, 0, 0, 0.7);
         padding: 10px 20px;
         box-sizing: border-box;
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        z-index: 100;
+        z-index: 100; /* Higher than info panel */
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       }
 
@@ -294,7 +297,6 @@
         loader.load(`textures/${planet.texture}`,
           (texture) => {
             material.map = texture;
-            // Special treatment for the Sun
             if (planet.name === "الشمس") {
               material.emissive = new THREE.Color(0xffff00);
               material.emissiveIntensity = 1.5;
@@ -307,7 +309,6 @@
         mesh.rotation.x = planet.tilt * Math.PI / 180;
         scene.add(mesh);
         
-        // Circular Orbit Path
         if (planet.distance > 0) {
           const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 128);
           
@@ -458,18 +459,15 @@
       const planetsMenu = document.getElementById('planetsMenu');
       const planetsDropdown = document.getElementById('planetsDropdown');
       
-      // Toggle dropdown when clicking the menu item
       planetsMenu.addEventListener('click', (e) => {
         e.stopPropagation();
         planetsDropdown.classList.toggle('show');
       });
       
-      // Close dropdown when clicking anywhere else
       document.addEventListener('click', () => {
         planetsDropdown.classList.remove('show');
       });
       
-      // Handle planet selection from dropdown
       document.querySelectorAll('.dropdown-item').forEach(item => {
         item.addEventListener('click', (e) => {
           e.preventDefault();
@@ -479,45 +477,35 @@
         });
       });
       
-      // Function to smoothly focus camera on a planet
       function focusOnPlanet(index) {
         const planet = planetMeshes[index];
         const targetPosition = planet.mesh.position.clone();
         
-        // For the sun, we want to be closer since it's at the center
         if (index === 0) {
-          targetPosition.z += 15; // Move camera slightly above the sun
+          targetPosition.z += 15;
         } else {
-          // For other planets, position the camera at a distance relative to the planet's size
           const distance = planet.planet.radius * 10;
           targetPosition.z += distance;
         }
         
-        // Set up animation to move camera
         const startPosition = camera.position.clone();
         const startTime = Date.now();
-        const duration = 1500; // 1.5 seconds
+        const duration = 1500;
         
-        // Animate camera movement
         function animateCamera() {
           const elapsed = Date.now() - startTime;
           const progress = Math.min(elapsed / duration, 1);
           
-          // Ease in-out function for smooth movement
           const easeProgress = progress < 0.5 
             ? 2 * progress * progress 
             : 1 - Math.pow(-2 * progress + 2, 2) / 2;
           
-          // Interpolate position
           camera.position.lerpVectors(startPosition, targetPosition, easeProgress);
-          
-          // Make camera look at the planet
           camera.lookAt(planet.mesh.position);
           
           if (progress < 1) {
             requestAnimationFrame(animateCamera);
           } else {
-            // Animation complete - show info panel
             planetName.textContent = planet.planet.name;
             planetInfo.innerHTML = planet.planet.info.replace(/\n/g, '<br>');
             infoPanel.style.display = 'block';
@@ -540,7 +528,6 @@
           mesh.rotation.y += data.rotation;
         });
         
-        // Comet Animation
         const cometAngle = Date.now() * 0.0005;
         comet.position.x = Math.cos(cometAngle) * 80;
         comet.position.z = Math.sin(cometAngle) * 80;
@@ -552,7 +539,6 @@
       
       animate();
       
-      // Responsive Resize
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
