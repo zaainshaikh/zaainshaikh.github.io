@@ -510,23 +510,45 @@
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
 
-      // --- Event Listeners ---
+     // --- Event Listeners ---
       window.addEventListener("click", (event) => {
-        if (event.target.closest('#menuBar') || event.target.closest('#infoPanel')) return;
+        // Prevent clicks on menu/infopanel from triggering raycast
+        if (event.target.closest('#menuBar') || event.target.closest('#infoPanel')) {
+             return;
+        }
+
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(mouse, camera);
+
         const intersects = raycaster.intersectObjects(planetMeshes.map((p) => p.mesh));
+
+        // ***** MODIFICATION START *****
         if (intersects.length > 0) {
           const clickedPlanetMesh = intersects[0].object;
-          const planetId = clickedPlanetMesh.userData.id;
-          const planetData = planetsData.find(p => p.id === planetId);
-          if (planetData) {
-            displayPlanetInfo(planetData);
-            isFollowingPlanet = false; focusedPlanetIndex = -1;
+          const planetId = clickedPlanetMesh.userData.id; // Get the ID stored earlier
+
+          // Check if a valid ID was retrieved
+          if (planetId !== undefined) {
+              // Call the same function used by the dropdown menu
+              focusOnPlanet(planetId);
           }
+          // No need for the old code that just showed the panel and stopped follow
+        }
+        // ***** MODIFICATION END *****
+         else {
+           if (isFollowingPlanet) {
+             isFollowingPlanet = false;
+             focusedPlanetIndex = -1;
+            // Optional: Clicking empty space could potentially stop following
+            // if (isFollowingPlanet) {
+            //    isFollowingPlanet = false;
+            //    focusedPlanetIndex = -1;
+            // }
         }
       });
+
+      // ... (rest of the event listeners: closeBtn, planetsMenu, etc. remain the same)
 
       closeBtn.addEventListener("click", () => {
         infoPanel.style.display = "none";
