@@ -163,7 +163,8 @@
         left: 0;
         width: 100%;
         height: 50px;
-        background: rgba(0, 0, 0, 0.85); /* Slightly more opaque */
+        /* Added transparency */
+        background: rgba(0, 0, 0, 0.75); /* Adjusted transparency */
         padding: 0 20px;
         box-sizing: border-box;
         display: flex;
@@ -180,10 +181,12 @@
       }
 
       /* Style for individual controls in menu - Cleaner look */
+      /* Updated: Ensure consistent size */
       .menu-item, #langToggleBtn, .time-control-btn {
         position: relative;
         color: white;
-        padding: 8px 12px; /* Consistent padding */
+        /* Consistent horizontal padding */
+        padding: 8px 15px;
         margin-left: 8px; /* Slightly reduced space between items */
         cursor: pointer;
         font-family: "Poppins", "Cairo", sans-serif;
@@ -193,10 +196,19 @@
         user-select: none;
         background-color: rgba(255, 255, 255, 0.08); /* Slightly less visible background */
         border: none; /* Removed individual borders */
+        /* Added: Fix width and align text */
+        min-width: 80px; /* Set a minimum width for consistency */
+        text-align: center; /* Center text within the button */
+        box-sizing: border-box; /* Include padding in width calculation */
+        height: 34px; /* Explicit height based on padding + font */
+        line-height: 18px; /* Align text vertically */
       }
       .time-control-btn {
         /* Padding is now inherited from the rule above */
         margin-left: 4px; /* Closer time controls */
+        min-width: auto; /* Time controls don't need fixed width */
+        padding: 8px 10px; /* Adjust padding for smaller buttons */
+        height: 34px;
       }
 
       .menu-item:hover, #langToggleBtn:hover, .time-control-btn:hover {
@@ -302,18 +314,15 @@
 
     </style>
   </head>
-  <body dir="rtl">
-    <div id="menuBar">
+  <body dir="ar"> <div id="menuBar">
       <div id="title">FalakZoom</div>
       <div class="controls-right">
-         <button class="time-control-btn" id="slowDownBtn">⏪</button>
-        <button class="time-control-btn" id="playPauseBtn">⏸️</button>
-        <button class="time-control-btn" id="speedUpBtn">⏩</button>
+         <button class="time-control-btn" id="slowDownBtn" title="Slow Down">⏪</button>
+        <button class="time-control-btn" id="playPauseBtn" title="Play/Pause">▶️</button> <button class="time-control-btn" id="speedUpBtn" title="Speed Up">⏩</button>
         <span id="speedDisplay">1x</span>
         <div id="langToggleBtn">English</div>
         <div class="menu-item" id="planetsMenu">
-          Planets
-          <div class="dropdown" id="planetsDropdown">
+          الكواكب <div class="dropdown" id="planetsDropdown">
             </div>
         </div>
       </div>
@@ -324,8 +333,7 @@
       <h2 id="planetName"></h2>
       <p id="planetInfo"></p>
       <p id="planetFact" class="fact"></p>
-      <button id="readMoreBtn">Read More</button>
-      <div id="extraFactsContainer" style="display: none;">
+      <button id="readMoreBtn">اقرأ المزيد</button> <div id="extraFactsContainer" style="display: none;">
           </div>
     </div>
 
@@ -333,31 +341,30 @@
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
     <script>
       // --- Language and UI Text ---
-      let currentLanguage = 'ar';
+      let currentLanguage = 'ar'; // Default to Arabic
       let currentlyDisplayedPlanetId = null; // Track displayed planet ID
 
       const uiText = {
           planetsMenu: { ar: "الكواكب", en: "Planets" },
           langToggle: { ar: "English", en: "العربية" },
           readMore: { ar: "اقرأ المزيد", en: "Read More" },
-          playBtn: { ar: "▶️", en: "▶️" },
-          pauseBtn: { ar: "⏸️", en: "⏸️" }
+          playBtn: { ar: "▶️", en: "▶️" }, // Play icon
+          pauseBtn: { ar: "⏸️", en: "⏸️" } // Pause icon
           // Constellation text removed
       };
 
       // --- Planet Data with Multilingual Support & Extra Facts ---
       const planetsData = [
-         { id: 0, name: { ar: "الشمس", en: "Sun" }, radius: 5, distance: 0, speed: 0, tilt: 0, rotation: 0.01, texture: "sun.jpg", info: { ar: "القطر: 1.391 مليون كم\nالكتلة: 1.989 × 10³⁰ كجم\nالعمر: 4.6 مليار سنة\nالنوع: نجم تسلسل رئيسي من النوع G\nدرجة حرارة النواة: 15 مليون درجة مئوية", en: "Diameter: 1.391 million km\nMass: 1.989 × 10³⁰ kg\nAge: 4.6 billion years\nType: G-type main-sequence star\nCore Temperature: 15 million °C" }, fact: { ar: "تحتوي الشمس على 99.86% من كتلة النظام الشمسي وهي المصدر الرئيسي للطاقة للحياة على الأرض.", en: "The Sun contains 99.86% of the Solar System's mass and is the primary source of energy for life on Earth." }, extraFacts: [{ar:"تولد الشمس الطاقة من خلال الاندماج النووي، وتحول الهيدروجين إلى هيليوم في نواتها.", en:"The Sun generates energy through nuclear fusion, converting hydrogen into helium in its core."},{ar:"يستغرق ضوء الشمس حوالي 8 دقائق و 20 ثانية للوصول إلى الأرض.", en:"Light from the Sun takes about 8 minutes and 20 seconds to reach Earth."},{ar:"للشمس مجال مغناطيسي قوي يسبب ظواهر مثل البقع الشمسية والتوهجات الشمسية.", en:"The Sun has a powerful magnetic field, which causes phenomena like sunspots and solar flares."}] },
-         { id: 1, name: { ar: "عطارد", en: "Mercury" }, radius: 0.5, distance: 10, speed: 0.0125, tilt: 0.034, rotation: 0.003, texture: "mercury.jpg", info: { ar: "القطر: 4,879 كم\nالكتلة: 3.3 × 10²³ كجم\nالدوران حول الشمس: 88 يومًا\nدرجة حرارة السطح: -173°م إلى 427°م\nلا يوجد غلاف جوي تقريبًا", en: "Diameter: 4,879 km\nMass: 3.3 × 10²³ kg\nOrbit: 88 days\nSurface Temp: -173°C to 427°C\nAlmost no atmosphere" }, fact: { ar: "اليوم الشمسي الواحد على عطارد (من شروق إلى شروق) يستمر حوالي 176 يومًا أرضيًا بسبب دورانه البطيء ومداره السريع.", en: "One solar day on Mercury lasts about 176 Earth days due to its slow rotation and fast orbit." }, extraFacts: [{ar:"عطارد هو أصغر كوكب ويعاني من أشد تقلبات درجات الحرارة بين النهار والليل.", en:"Mercury is the smallest planet and has the most extreme temperature fluctuations between day and night."},{ar:"يمتلك عطارد نواة حديدية كبيرة بشكل غير متناسب، تشكل حوالي 85% من نصف قطر الكوكب.", en:"Mercury has a disproportionately large iron core, making up about 85% of the planet's radius."},{ar:"على الرغم من قربه من الشمس، تم اكتشاف جليد الماء في فوهات قطبية مظللة بشكل دائم على عطارد.", en:"Despite its proximity to the Sun, water ice has been detected in permanently shadowed polar craters on Mercury."}] },
-         { id: 2, name: { ar: "الزهرة", en: "Venus" }, radius: 0.8, distance: 15, speed: 0.004375, tilt: 177.4, rotation: 0.0004, texture: "venus.jpg", info: { ar: "القطر: 12,104 كم\nالكتلة: 4.87 × 10²⁴ كجم\nالدوران حول الشمس: 225 يومًا\nدرجة حرارة السطح: 464°م\nغلاف جوي كثيف من ثاني أكسيد الكربون", en: "Diameter: 12,104 km\nMass: 4.87 × 10²⁴ kg\nOrbit: 225 days\nSurface Temp: 464°C\nThick CO2 atmosphere" }, fact: { ar: "الزهرة هو أسخن كوكب ويدور للخلف مقارنة بمعظم الكواكب الأخرى (دوران تراجعي).", en: "Venus is the hottest planet and rotates backwards compared to most other planets (retrograde rotation)." }, extraFacts: [{ar:"الضغط الجوي على سطح الزهرة يعادل الضغط على عمق 900 متر تحت الماء على الأرض.", en:"The atmospheric pressure on Venus's surface is equivalent to the pressure 900 meters underwater on Earth."},{ar:"اليوم على الزهرة (243 يومًا أرضيًا) أطول من سنته (225 يومًا أرضيًا).", en:"A day on Venus (243 Earth days) is longer than its year (225 Earth days)."},{ar:"تتكون سحب الزهرة بشكل أساسي من قطرات حمض الكبريتيك.", en:"Venus's clouds are primarily composed of sulfuric acid droplets."}] },
-         { id: 3, name: { ar: "الأرض", en: "Earth" }, radius: 1, distance: 20, speed: 0.003125, tilt: 23.5, rotation: 0.05, texture: "earth.jpg", info: { ar: "القطر: 12,742 كم\nالكتلة: 5.97 × 10²⁴ كجم\nالدوران حول الشمس: 365.25 يومًا\nدرجة حرارة السطح: -88°م إلى 58°م\n71% من السطح مغطى بالماء", en: "Diameter: 12,742 km\nMass: 5.97 × 10²⁴ kg\nOrbit: 365.25 days\nSurface Temp: -88°C to 58°C\n71% covered by water" }, fact: { ar: "الأرض هي الكوكب الوحيد المعروف الذي يستضيف الحياة ويحتوي على ماء سائل على سطحه.", en: "Earth is the only known planet to host life and have liquid water on its surface." }, extraFacts: [{ar:"يحمي المجال المغناطيسي للأرض الكوكب من الإشعاع الشمسي الضار والرياح الشمسية.", en:"Earth's magnetic field protects the planet from harmful solar radiation and solar wind."},{ar:"تتكون الأرض من صفائح تكتونية تتحرك باستمرار، مما يتسبب في الزلازل والبراكين وتكوين الجبال.", en:"Earth is composed of tectonic plates that constantly move, causing earthquakes, volcanoes, and mountain formation."},{ar:"القمر، التابع الطبيعي الوحيد للأرض، يؤثر على المد والجزر ويثبت ميل محور الأرض.", en:"The Moon, Earth's only natural satellite, influences tides and stabilizes Earth's axial tilt."}] },
-         { id: 4, name: { ar: "المريخ", en: "Mars" }, radius: 0.7, distance: 25, speed: 0.0025, tilt: 25.2, rotation: 0.048, texture: "mars.jpg", info: { ar: "القطر: 6,792 كم\nالكتلة: 6.42 × 10²³ كجم\nالدوران حول الشمس: 687 يومًا\nدرجة حرارة السطح: -153°م إلى 20°م\nغلاف جوي رقيق من ثاني أكسيد الكربون", en: "Diameter: 6,792 km\nMass: 6.42 × 10²³ kg\nOrbit: 687 days\nSurface Temp: -153°C to 20°C\nThin CO2 atmosphere" }, fact: { ar: "يُعرف المريخ بالكوكب الأحمر بسبب أكسيد الحديد (الصدأ) على سطحه ويحتوي على أطول بركان وأكبر وادٍ في النظام الشمسي.", en: "Mars is known as the Red Planet due to iron oxide (rust) on its surface and has the tallest volcano and largest canyon in the Solar System." }, extraFacts: [{ar:"للمريخ قمران صغيران، فوبوس وديموس، يعتقد أنهما كويكبات تم أسرها.", en:"Mars has two small moons, Phobos and Deimos, which are thought to be captured asteroids."},{ar:"هناك أدلة قوية على وجود ماء سائل على سطح المريخ في الماضي، وقد لا يزال موجودًا تحت الأرض.", en:"There is strong evidence that liquid water existed on Mars' surface in the past, and may still exist underground."},{ar:"يشهد المريخ أكبر العواصف الترابية في النظام الشمسي، والتي يمكن أن تغطي الكوكب بأكمله أحيانًا.", en:"Mars experiences the largest dust storms in the Solar System, which can sometimes cover the entire planet."}] },
-         { id: 5, name: { ar: "المشتري", en: "Jupiter" }, radius: 2.5, distance: 35, speed: 0.00125, tilt: 3.1, rotation: 0.1, texture: "jupiter.jpg", info: { ar: "القطر: 139,820 كم\nالكتلة: 1.898 × 10²⁷ كجم\nالدوران حول الشمس: 11.86 سنة\nدرجة حرارة قمة السحب: -145°م\nعملاق غازي", en: "Diameter: 139,820 km\nMass: 1.898 × 10²⁷ kg\nOrbit: 11.86 years\nCloud Top Temp: -145°C\nGas giant" }, fact: { ar: "المشتري هو أكبر كوكب ويتميز بالبقعة الحمراء العظيمة، وهي عاصفة عملاقة مستعرة منذ قرون.", en: "Jupiter is the largest planet and features the Great Red Spot, a giant storm raging for centuries." }, extraFacts: [{ar:"يمتلك المشتري أقوى مجال مغناطيسي بين جميع الكواكب، أقوى بحوالي 20,000 مرة من مجال الأرض.", en:"Jupiter has the strongest magnetic field of any planet, about 20,000 times stronger than Earth's."},{ar:"يدور المشتري أسرع من أي كوكب آخر، ويكمل دورة واحدة في أقل من 10 ساعات بقليل.", en:"Jupiter rotates faster than any other planet, completing one rotation in just under 10 hours."},{ar:"للمشتري نظام حلقات باهت والعديد من الأقمار، بما في ذلك أقمار غاليليو الأربعة الكبيرة: آيو، أوروبا، جانيميد، وكاليستو.", en:"Jupiter has a faint ring system and numerous moons, including the four large Galilean moons: Io, Europa, Ganymede, and Callisto."}] },
-         { id: 6, name: { ar: "زحل", en: "Saturn" }, radius: 2, distance: 45, speed: 0.0009375, tilt: 26.7, rotation: 0.09, texture: "saturn.jpg", info: { ar: "القطر: 116,460 كم\nالكتلة: 5.68 × 10²⁶ كجم\nالدوران حول الشمس: 29.46 سنة\nدرجة حرارة قمة السحب: -184°م\nعملاق غازي", en: "Diameter: 116,460 km\nMass: 5.68 × 10²⁶ kg\nOrbit: 29.46 years\nCloud Top Temp: -184°C\nGas giant" }, fact: { ar: "يشتهر زحل بنظام حلقاته المذهل، المكون في الغالب من جزيئات الجليد وحطام الصخور.", en: "Saturn is famous for its stunning ring system, made mostly of ice particles and rock debris." }, extraFacts: [{ar:"زحل هو الكوكب الأقل كثافة؛ كثافته أقل من كثافة الماء، مما يعني أنه سيطفو في حوض استحمام كبير بما فيه الكفاية!", en:"Saturn is the least dense planet; it's less dense than water, meaning it would float in a large enough bathtub!"},{ar:"أكبر أقمار زحل، تيتان، هو القمر الوحيد في النظام الشمسي الذي يمتلك غلافًا جويًا كثيفًا وبحيرات سائلة (من الميثان/الإيثان) على سطحه.", en:"Saturn's largest moon, Titan, is the only moon in the Solar System with a thick atmosphere and liquid lakes (of methane/ethane) on its surface."},{ar:"توجد عاصفة كبيرة ومستمرة سداسية الشكل عند القطب الشمالي لزحل.", en:"A large, persistent hexagonal-shaped storm exists at Saturn's north pole."}] },
-         { id: 7, name: { ar: "أورانوس", en: "Uranus" }, radius: 1.5, distance: 55, speed: 0.0005, tilt: 97.8, rotation: 0.06, texture: "uranus.jpg", info: { ar: "القطر: 50,724 كم\nالكتلة: 8.68 × 10²⁵ كجم\nالدوران حول الشمس: 84 سنة\nدرجة حرارة قمة السحب: -224°م\nعملاق جليدي", en: "Diameter: 50,724 km\nMass: 8.68 × 10²⁵ kg\nOrbit: 84 years\nCloud Top Temp: -224°C\nIce giant" }, fact: { ar: "يدور أورانوس على جانبه بميل محوري يقارب 98 درجة، مما يجعله فريدًا بين الكواكب.", en: "Uranus rotates on its side with an axial tilt of nearly 98 degrees, making it unique among planets." }, extraFacts: [{ar:"أورانوس هو أبرد كوكب في النظام الشمسي، على الرغم من أنه ليس الأبعد عن الشمس.", en:"Uranus is the coldest planet in the Solar System, despite not being the farthest from the Sun."},{ar:"يُعتقد أن ميله الشديد ناتج عن اصطدام هائل بجسم بحجم الأرض في وقت مبكر من تاريخ النظام الشمسي.", en:"Its extreme tilt is thought to be the result of a massive collision with an Earth-sized object early in the Solar System's history."},{ar:"مثل زحل، يمتلك أورانوس نظام حلقات، على الرغم من أنه أغمق وأبهت بكثير.", en:"Like Saturn, Uranus possesses a ring system, although it is much darker and fainter."}] },
-         { id: 8, name: { ar: "نبتون", en: "Neptune" }, radius: 1.5, distance: 65, speed: 0.000375, tilt: 28.3, rotation: 0.07, texture: "neptune.jpg", info: { ar: "القطر: 49,244 كم\nالكتلة: 1.02 × 10²⁶ كجم\nالدوران حول الشمس: 164.8 سنة\nدرجة حرارة قمة السحب: -201°م\nعملاق جليدي", en: "Diameter: 49,244 km\nMass: 1.02 × 10²⁶ kg\nOrbit: 164.8 years\nCloud Top Temp: -201°C\nIce giant" }, fact: { ar: "نبتون هو أبعد كوكب عن الشمس، معروف بلونه الأزرق العميق وأسرع الرياح في النظام الشمسي.", en: "Neptune is the farthest planet from the Sun, known for its deep blue color and the fastest winds in the Solar System." }, extraFacts: [{ar:"تم اكتشاف نبتون رياضيًا قبل رصده مباشرة، بناءً على الاضطرابات في مدار أورانوس.", en:"Neptune was discovered mathematically before being directly observed, based on perturbations in Uranus's orbit."},{ar:"يمكن أن تصل سرعة الرياح على نبتون إلى أكثر من 2000 كيلومتر في الساعة (1200 ميل في الساعة).", en:"Winds on Neptune can reach speeds of over 2,000 kilometers per hour (1,200 mph)."},{ar:"أكبر أقمار نبتون، ترايتون، يدور حول الكوكب في اتجاه تراجعي (عكس دوران نبتون) ومن المرجح أنه جسم تم أسره من حزام كايبر.", en:"Neptune's largest moon, Triton, orbits the planet in a retrograde direction (opposite to Neptune's rotation) and is likely a captured Kuiper Belt Object."}] }
+         { id: 0, name: { ar: "الشمس", en: "Sun" }, radius: 5, distance: 0, speed: 0, tilt: 0, rotation: 0.01, texture: "sun.jpg", info: { ar: "القطر: 1.391 مليون كم\nالكتلة: 1.989 × 10³⁰ كجم\nالعمر: 4.6 مليار سنة\nالنوع: نجم تسلسل رئيسي من النوع G\nدرجة حرارة اللب: 15 مليون درجة مئوية", en: "Diameter: 1.391 million km\nMass: 1.989 × 10³⁰ kg\nAge: 4.6 billion years\nType: G-type main-sequence star\nCore Temperature: 15 million °C" }, fact: { ar: "تحتوي الشمس على 99.86% من كتلة النظام الشمسي وهي المصدر الرئيسي للطاقة للحياة على الأرض.", en: "The Sun contains 99.86% of the Solar System's mass and is the primary source of energy for life on Earth." }, extraFacts: [{ar:"تولد الشمس الطاقة من خلال الاندماج النووي، محولة الهيدروجين إلى هيليوم في لبها.", en:"The Sun generates energy through nuclear fusion, converting hydrogen into helium in its core."},{ar:"يستغرق ضوء الشمس حوالي 8 دقائق و 20 ثانية للوصول إلى الأرض.", en:"Light from the Sun takes about 8 minutes and 20 seconds to reach Earth."},{ar:"تمتلك الشمس مجالًا مغناطيسيًا قويًا يسبب ظواهر مثل البقع الشمسية والتوهجات الشمسية.", en:"The Sun has a powerful magnetic field, which causes phenomena like sunspots and solar flares."}] },
+         { id: 1, name: { ar: "عطارد", en: "Mercury" }, radius: 0.5, distance: 10, speed: 0.0125, tilt: 0.034, rotation: 0.003, texture: "mercury.jpg", info: { ar: "القطر: 4,879 كم\nالكتلة: 3.3 × 10²³ كجم\nالمدار: 88 يومًا\nدرجة حرارة السطح: -173°م إلى 427°م\nلا يوجد غلاف جوي تقريبًا", en: "Diameter: 4,879 km\nMass: 3.3 × 10²³ kg\nOrbit: 88 days\nSurface Temp: -173°C to 427°C\nAlmost no atmosphere" }, fact: { ar: "يستمر اليوم الشمسي الواحد على عطارد (من شروق شمس لشروق تالٍ) حوالي 176 يومًا أرضيًا بسبب دورانه البطيء ومداره السريع.", en: "One solar day on Mercury lasts about 176 Earth days due to its slow rotation and fast orbit." }, extraFacts: [{ar:"عطارد هو أصغر كوكب ويعاني من أكبر تقلبات في درجات الحرارة بين النهار والليل.", en:"Mercury is the smallest planet and has the most extreme temperature fluctuations between day and night."},{ar:"يمتلك عطارد نواة حديدية كبيرة بشكل غير متناسب، تشكل حوالي 85% من نصف قطر الكوكب.", en:"Mercury has a disproportionately large iron core, making up about 85% of the planet's radius."},{ar:"على الرغم من قربه من الشمس، تم اكتشاف جليد الماء في فوهات قطبية مظللة بشكل دائم على عطارد.", en:"Despite its proximity to the Sun, water ice has been detected in permanently shadowed polar craters on Mercury."}] },
+         { id: 2, name: { ar: "الزهرة", en: "Venus" }, radius: 0.8, distance: 15, speed: 0.004375, tilt: 177.4, rotation: 0.0004, texture: "venus.jpg", info: { ar: "القطر: 12,104 كم\nالكتلة: 4.87 × 10²⁴ كجم\nالمدار: 225 يومًا\nدرجة حرارة السطح: 464°م\nغلاف جوي كثيف من ثاني أكسيد الكربون", en: "Diameter: 12,104 km\nMass: 4.87 × 10²⁴ kg\nOrbit: 225 days\nSurface Temp: 464°C\nThick CO2 atmosphere" }, fact: { ar: "الزهرة هو الكوكب الأكثر سخونة ويدور للخلف مقارنة بمعظم الكواكب الأخرى (دوران تراجعي).", en: "Venus is the hottest planet and rotates backwards compared to most other planets (retrograde rotation)." }, extraFacts: [{ar:"الضغط الجوي على سطح الزهرة يعادل الضغط على عمق 900 متر تحت الماء على الأرض.", en:"The atmospheric pressure on Venus's surface is equivalent to the pressure 900 meters underwater on Earth."},{ar:"اليوم على الزهرة (243 يومًا أرضيًا) أطول من سنتها (225 يومًا أرضيًا).", en:"A day on Venus (243 Earth days) is longer than its year (225 Earth days)."},{ar:"تتكون سحب الزهرة بشكل أساسي من قطرات حمض الكبريتيك.", en:"Venus's clouds are primarily composed of sulfuric acid droplets."}] },
+         { id: 3, name: { ar: "الأرض", en: "Earth" }, radius: 1, distance: 20, speed: 0.003125, tilt: 23.5, rotation: 0.05, texture: "earth.jpg", info: { ar: "القطر: 12,742 كم\nالكتلة: 5.97 × 10²⁴ كجم\nالمدار: 365.25 يومًا\nدرجة حرارة السطح: -88°م إلى 58°م\n71% مغطى بالماء", en: "Diameter: 12,742 km\nMass: 5.97 × 10²⁴ kg\nOrbit: 365.25 days\nSurface Temp: -88°C to 58°C\n71% covered by water" }, fact: { ar: "الأرض هي الكوكب الوحيد المعروف الذي يؤوي الحياة ويحتوي على ماء سائل على سطحه.", en: "Earth is the only known planet to host life and have liquid water on its surface." }, extraFacts: [{ar:"يحمي المجال المغناطيسي للأرض الكوكب من الإشعاع الشمسي الضار والرياح الشمسية.", en:"Earth's magnetic field protects the planet from harmful solar radiation and solar wind."},{ar:"تتكون الأرض من صفائح تكتونية تتحرك باستمرار، مما يسبب الزلازل والبراكين وتكون الجبال.", en:"Earth is composed of tectonic plates that constantly move, causing earthquakes, volcanoes, and mountain formation."},{ar:"القمر، التابع الطبيعي الوحيد للأرض، يؤثر على المد والجزر ويثبت ميل محور الأرض.", en:"The Moon, Earth's only natural satellite, influences tides and stabilizes Earth's axial tilt."}] },
+         { id: 4, name: { ar: "المريخ", en: "Mars" }, radius: 0.7, distance: 25, speed: 0.0025, tilt: 25.2, rotation: 0.048, texture: "mars.jpg", info: { ar: "القطر: 6,792 كم\nالكتلة: 6.42 × 10²³ كجم\nالمدار: 687 يومًا\nدرجة حرارة السطح: -153°م إلى 20°م\nغلاف جوي رقيق من ثاني أكسيد الكربون", en: "Diameter: 6,792 km\nMass: 6.42 × 10²³ kg\nOrbit: 687 days\nSurface Temp: -153°C to 20°C\nThin CO2 atmosphere" }, fact: { ar: "يُعرف المريخ بالكوكب الأحمر بسبب أكسيد الحديد (الصدأ) على سطحه ويحتوي على أطول بركان وأكبر وادٍ في النظام الشمسي.", en: "Mars is known as the Red Planet due to iron oxide (rust) on its surface and has the tallest volcano and largest canyon in the Solar System." }, extraFacts: [{ar:"يمتلك المريخ قمرين صغيرين، فوبوس وديموس، يُعتقد أنهما كويكبات تم أسرها.", en:"Mars has two small moons, Phobos and Deimos, which are thought to be captured asteroids."},{ar:"هناك أدلة قوية على وجود ماء سائل على سطح المريخ في الماضي، وقد لا يزال موجودًا تحت الأرض.", en:"There is strong evidence that liquid water existed on Mars' surface in the past, and may still exist underground."},{ar:"يشهد المريخ أكبر العواصف الترابية في النظام الشمسي، والتي يمكن أن تغطي الكوكب بأكمله أحيانًا.", en:"Mars experiences the largest dust storms in the Solar System, which can sometimes cover the entire planet."}] },
+         { id: 5, name: { ar: "المشتري", en: "Jupiter" }, radius: 2.5, distance: 35, speed: 0.00125, tilt: 3.1, rotation: 0.1, texture: "jupiter.jpg", info: { ar: "القطر: 139,820 كم\nالكتلة: 1.898 × 10²⁷ كجم\nالمدار: 11.86 سنة\nدرجة حرارة قمة السحاب: -145°م\nعملاق غازي", en: "Diameter: 139,820 km\nMass: 1.898 × 10²⁷ kg\nOrbit: 11.86 years\nCloud Top Temp: -145°C\nGas giant" }, fact: { ar: "المشتري هو أكبر كوكب ويتميز بالبقعة الحمراء العظيمة، وهي عاصفة عملاقة مستمرة منذ قرون.", en: "Jupiter is the largest planet and features the Great Red Spot, a giant storm raging for centuries." }, extraFacts: [{ar:"يمتلك المشتري أقوى مجال مغناطيسي بين الكواكب، أقوى بحوالي 20,000 مرة من مجال الأرض.", en:"Jupiter has the strongest magnetic field of any planet, about 20,000 times stronger than Earth's."},{ar:"يدور المشتري أسرع من أي كوكب آخر، مكملًا دورة واحدة في أقل من 10 ساعات بقليل.", en:"Jupiter rotates faster than any other planet, completing one rotation in just under 10 hours."},{ar:"يمتلك المشتري نظام حلقات خافت والعديد من الأقمار، بما في ذلك أقمار جاليليو الأربعة الكبيرة: آيو، أوروبا، جانيميد، وكاليستو.", en:"Jupiter has a faint ring system and numerous moons, including the four large Galilean moons: Io, Europa, Ganymede, and Callisto."}] },
+         { id: 6, name: { ar: "زحل", en: "Saturn" }, radius: 2, distance: 45, speed: 0.0009375, tilt: 26.7, rotation: 0.09, texture: "saturn.jpg", info: { ar: "القطر: 116,460 كم\nالكتلة: 5.68 × 10²⁶ كجم\nالمدار: 29.46 سنة\nدرجة حرارة قمة السحاب: -184°م\nعملاق غازي", en: "Diameter: 116,460 km\nMass: 5.68 × 10²⁶ kg\nOrbit: 29.46 years\nCloud Top Temp: -184°C\nGas giant" }, fact: { ar: "يشتهر زحل بنظام حلقاته المذهل، المكون في الغالب من جزيئات الجليد وحطام الصخور.", en: "Saturn is famous for its stunning ring system, made mostly of ice particles and rock debris." }, extraFacts: [{ar:"زحل هو الكوكب الأقل كثافة؛ إنه أقل كثافة من الماء، مما يعني أنه سيطفو في حوض استحمام كبير بما فيه الكفاية!", en:"Saturn is the least dense planet; it's less dense than water, meaning it would float in a large enough bathtub!"},{ar:"تيتان، أكبر أقمار زحل، هو القمر الوحيد في النظام الشمسي الذي يمتلك غلافًا جويًا سميكًا وبحيرات سائلة (من الميثان/الإيثان) على سطحه.", en:"Saturn's largest moon, Titan, is the only moon in the Solar System with a thick atmosphere and liquid lakes (of methane/ethane) on its surface."},{ar:"توجد عاصفة كبيرة مستمرة سداسية الشكل عند القطب الشمالي لزحل.", en:"A large, persistent hexagonal-shaped storm exists at Saturn's north pole."}] },
+         { id: 7, name: { ar: "أورانوس", en: "Uranus" }, radius: 1.5, distance: 55, speed: 0.0005, tilt: 97.8, rotation: 0.06, texture: "uranus.jpg", info: { ar: "القطر: 50,724 كم\nالكتلة: 8.68 × 10²⁵ كجم\nالمدار: 84 سنة\nدرجة حرارة قمة السحاب: -224°م\nعملاق جليدي", en: "Diameter: 50,724 km\nMass: 8.68 × 10²⁵ kg\nOrbit: 84 years\nCloud Top Temp: -224°C\nIce giant" }, fact: { ar: "يدور أورانوس على جانبه بميل محوري يقارب 98 درجة، مما يجعله فريدًا بين الكواكب.", en: "Uranus rotates on its side with an axial tilt of nearly 98 degrees, making it unique among planets." }, extraFacts: [{ar:"أورانوس هو أبرد كوكب في النظام الشمسي، على الرغم من أنه ليس الأبعد عن الشمس.", en:"Uranus is the coldest planet in the Solar System, despite not being the farthest from the Sun."},{ar:"يُعتقد أن ميله الشديد ناتج عن اصطدام هائل بجسم بحجم الأرض في وقت مبكر من تاريخ النظام الشمسي.", en:"Its extreme tilt is thought to be the result of a massive collision with an Earth-sized object early in the Solar System's history."},{ar:"مثل زحل، يمتلك أورانوس نظام حلقات، على الرغم من أنه أغمق وأضعف بكثير.", en:"Like Saturn, Uranus possesses a ring system, although it is much darker and fainter."}] },
+         { id: 8, name: { ar: "نبتون", en: "Neptune" }, radius: 1.5, distance: 65, speed: 0.000375, tilt: 28.3, rotation: 0.07, texture: "neptune.jpg", info: { ar: "القطر: 49,244 كم\nالكتلة: 1.02 × 10²⁶ كجم\nالمدار: 164.8 سنة\nدرجة حرارة قمة السحاب: -201°م\nعملاق جليدي", en: "Diameter: 49,244 km\nMass: 1.02 × 10²⁶ kg\nOrbit: 164.8 years\nCloud Top Temp: -201°C\nIce giant" }, fact: { ar: "نبتون هو أبعد كوكب عن الشمس، معروف بلونه الأزرق العميق وأسرع الرياح في النظام الشمسي.", en: "Neptune is the farthest planet from the Sun, known for its deep blue color and the fastest winds in the Solar System." }, extraFacts: [{ar:"تم اكتشاف نبتون رياضيًا قبل رصده مباشرة، بناءً على الاضطرابات في مدار أورانوس.", en:"Neptune was discovered mathematically before being directly observed, based on perturbations in Uranus's orbit."},{ar:"يمكن أن تصل سرعة الرياح على نبتون إلى أكثر من 2000 كيلومتر في الساعة (1200 ميل في الساعة).", en:"Winds on Neptune can reach speeds of over 2,000 kilometers per hour (1,200 mph)."},{ar:"تريتون، أكبر أقمار نبتون، يدور حول الكوكب في اتجاه تراجعي (عكس دوران نبتون) ومن المحتمل أنه جسم تم أسره من حزام كايبر.", en:"Neptune's largest moon, Triton, orbits the planet in a retrograde direction (opposite to Neptune's rotation) and is likely a captured Kuiper Belt Object."}] }
        ];
-
 
       // --- THREE.js Setup ---
       const clock = new THREE.Clock(); // Clock for delta time
@@ -366,13 +373,15 @@
       camera.position.set(0, 50, 100); // Initial camera position
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
+      // Enable physically correct lighting
+      renderer.physicallyCorrectLights = true;
       document.body.appendChild(renderer.domElement);
 
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.maxDistance = 400; // Max zoom out
       controls.minDistance = 10; // Min zoom in
       controls.enableDamping = true;
-      controls.dampingFactor = 0.05;
+      controls.dampingFactor = 0.05; // Keep damping for smooth manual control
 
       // Variables to manage camera focus and following
       let focusedPlanetIndex = -1;
@@ -388,33 +397,68 @@
 
       // Stop following when user interacts with controls
       controls.addEventListener("start", () => {
-        isFollowingPlanet = false;
-        focusedPlanetIndex = -1;
-        if (followAnimationId) cancelAnimationFrame(followAnimationId); // Stop any ongoing focus animation
+        if (isFollowingPlanet) { // Only act if currently following
+            isFollowingPlanet = false;
+            focusedPlanetIndex = -1;
+            if (followAnimationId) {
+                 cancelAnimationFrame(followAnimationId); // Stop any ongoing focus animation
+                 followAnimationId = null;
+            }
+        }
       });
 
+      // --- Lighting (Improved & More Realistic) ---
+      // Main light source from the Sun's position
+      const sunLight = new THREE.PointLight(0xffffff, 2.5, 2000, 1.5); // Increased intensity, decay based on distance
+      scene.add(sunLight); // Will be positioned at the Sun mesh later
 
-      // --- Lighting ---
-      const sunLight = new THREE.PointLight(0xffffff, 1.5, 1500); // Brighter point light from the Sun
-      scene.add(sunLight);
-      const ambientLight = new THREE.AmbientLight(0x404040, 0.6); // Soft ambient light
+      // Soft ambient light for overall illumination
+      const ambientLight = new THREE.AmbientLight(0x606080, 0.7); // Cooler ambient, slightly increased intensity
       scene.add(ambientLight);
-      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.3); // Gentle overhead light
-      hemiLight.position.set(0, 100, 0);
+
+      // Gentle hemisphere light for subtle top/bottom color gradient
+      const hemiLight = new THREE.HemisphereLight(0xaaaaaa, 0x444444, 0.5); // Adjusted colors and intensity
+      hemiLight.position.set(0, 150, 0);
       scene.add(hemiLight);
+
 
       // --- Textures & Stars ---
       const loader = new THREE.TextureLoader();
       const starGeometry = new THREE.BufferGeometry();
-      const starCount = 7000; // Increased star count
+      const starCount = 9000; // Increased star count
       const positions = new Float32Array(starCount * 3);
       for (let i = 0; i < starCount; i++) {
-        positions[i * 3] = (Math.random() - 0.5) * 2500; // Wider star field
-        positions[i * 3 + 1] = (Math.random() - 0.5) * 2500;
-        positions[i * 3 + 2] = (Math.random() - 0.5) * 2500;
+        // Distribute stars more spherically
+        const radius = 800 + Math.random() * 1000;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const theta = Math.random() * Math.PI * 2;
+
+        positions[i * 3]     = radius * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = radius * Math.cos(phi);
       }
       starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15 });
+      // Slightly vary star sizes and colors for more visual interest
+      const colors = new Float32Array(starCount * 3);
+      const sizes = new Float32Array(starCount);
+      const baseColor = new THREE.Color(0xffffff);
+      for (let i = 0; i < starCount; i++) {
+          const colorVariation = (Math.random() - 0.5) * 0.2;
+          const starColor = baseColor.clone().offsetHSL(colorVariation, 0.1, 0); // Add subtle color shifts
+          starColor.toArray(colors, i * 3);
+          sizes[i] = 0.1 + Math.random() * 0.15; // Vary sizes
+      }
+      starGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      starGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+      const starMaterial = new THREE.PointsMaterial({
+        //color: 0xffffff, // Color now defined per-vertex
+        vertexColors: true, // Use vertex colors
+        size: 0.15,         // Base size (will be modulated by attribute)
+        sizeAttenuation: true,
+        transparent: true,
+        opacity: 0.85
+      });
       const stars = new THREE.Points(starGeometry, starMaterial);
       scene.add(stars);
 
@@ -426,10 +470,21 @@
       planetsData.forEach((planet) => {
         const geometry = new THREE.SphereGeometry(planet.radius, 64, 64); // Higher detail spheres
         const material = new THREE.MeshStandardMaterial({
-          color: 0xffffff, // Base color, texture will override
-          emissive: planet.id === 0 ? 0xffff00 : 0x000000, // Sun emits light
-          emissiveIntensity: planet.id === 0 ? 1.8 : 0, // Sun emission strength
+          //color: 0xffffff, // Base color, texture will override
+          emissive: planet.id === 0 ? 0xffffaa : 0x000000, // Sun emits light, adjusted color
+          emissiveIntensity: planet.id === 0 ? 1.5 : 0, // Sun emission strength
+          roughness: 0.8, // Add roughness for more realistic non-shiny surfaces
+          metalness: 0.1 // Slight metalness for most bodies
         });
+
+        if(planet.id === 0) { // Sun specific material adjustments
+             material.roughness = 0.95;
+             material.metalness = 0.0;
+        }
+        if(planet.id === 7 || planet.id === 8) { // Ice giants slightly different
+             material.roughness = 0.6;
+        }
+
 
         loader.load(
           `textures/${planet.texture}`,
@@ -437,8 +492,7 @@
             material.map = texture;
             if (planet.id === 0) { // Special handling for Sun texture as emissive
               material.emissiveMap = texture;
-              material.emissive = new THREE.Color(0xffffaa); // Warm emission color
-              material.emissiveIntensity = 1.2;
+              // Emissive color/intensity already set above
             }
             material.needsUpdate = true;
           },
@@ -451,6 +505,11 @@
         mesh.rotation.x = (planet.tilt * Math.PI) / 180; // Apply axial tilt
         mesh.userData.id = planet.id; // Store planet ID for raycasting/lookup
         scene.add(mesh);
+
+        // Position Sun's light source at the Sun mesh
+        if (planet.id === 0) {
+            sunLight.position.copy(mesh.position);
+        }
 
         // Orbit lines (except for Sun)
         if (planet.distance > 0) {
@@ -466,7 +525,7 @@
           const orbitMaterial = new THREE.LineBasicMaterial({
             color: colorMap[planet.id] || 0xffffff, // Default white if no color defined
             transparent: true,
-            opacity: 0.4, // Subtle orbits
+            opacity: 0.3, // More subtle orbits
           });
           const orbit = new THREE.Line(orbitGeometry, orbitMaterial);
           scene.add(orbit);
@@ -485,27 +544,22 @@
              v3.fromBufferAttribute(pos, i);
              ringGeometry.attributes.uv.setXY(i, v3.length() < innerRadius + 0.1 ? 0 : 1, 1);
            }
-           const ringMaterial = new THREE.MeshBasicMaterial({
+           // Use MeshStandardMaterial for rings to react to light
+           const ringMaterial = new THREE.MeshStandardMaterial({
              map: ringTexture,
-             color: 0xffffff,
+             color: 0xffffff, // Base color
              side: THREE.DoubleSide,
              transparent: true,
-             opacity: 0.8
+             opacity: 0.8,
+             roughness: 0.85,
+             metalness: 0.05
            });
            const rings = new THREE.Mesh(ringGeometry, ringMaterial);
            rings.rotation.x = Math.PI / 2; // Orient rings correctly
            mesh.add(rings); // Add rings as a child of Saturn
         }
 
-        // Jupiter's Great Red Spot (simplified)
-        if (planet.id === 5) {
-          const spotGeometry = new THREE.SphereGeometry(planet.radius * 0.2, 16, 16); // Small sphere for spot
-          const spotMaterial = new THREE.MeshBasicMaterial({ color: 0xbb5533, transparent: true, opacity: 0.8 });
-          const redSpot = new THREE.Mesh(spotGeometry, spotMaterial);
-          redSpot.position.set(0, planet.radius * 0.5, planet.radius * 0.85); // Position on Jupiter's surface
-          mesh.add(redSpot); // Add spot as child
-        }
-
+        // Jupiter's Great Red Spot (simplified) - Removed for focus on core features
 
         planetMeshes.push({ mesh, planetData: planet, angle: Math.random() * Math.PI * 2 }); // Store mesh, data, and current angle
       });
@@ -523,42 +577,29 @@
         const angle = Math.random() * Math.PI * 2;
         const radius = beltInnerRadius + Math.random() * beltWidth; // Random radius within the belt
         asteroidPos[i * 3] = Math.cos(angle) * radius;
-        asteroidPos[i * 3 + 1] = (Math.random() - 0.5) * 1.0; // Slight vertical variation
+        asteroidPos[i * 3 + 1] = (Math.random() - 0.5) * 1.5; // Slightly more vertical variation
         asteroidPos[i * 3 + 2] = Math.sin(angle) * radius;
       }
       asteroidGeometry.setAttribute('position', new THREE.BufferAttribute(asteroidPos, 3));
-      const asteroidMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.08 });
+      const asteroidMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.08, sizeAttenuation: true, transparent: true, opacity: 0.7 });
       const asteroids = new THREE.Points(asteroidGeometry, asteroidMaterial);
       scene.add(asteroids);
 
-      // Comet
-      const cometGeometry = new THREE.SphereGeometry(0.2, 16, 16); // Small comet head
-      const cometMaterial = new THREE.MeshBasicMaterial({ color: 0xaaddff }); // Icy blue
-      const comet = new THREE.Mesh(cometGeometry, cometMaterial);
-      scene.add(comet);
-      // Comet Tail (simple line)
-      const tailPoints = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -2)]; // Points away from the sun (updated in animate)
-      const tailGeometry = new THREE.BufferGeometry().setFromPoints(tailPoints);
-      const tailMaterial = new THREE.LineBasicMaterial({ color: 0xaaddff, transparent: true, opacity: 0.6, linewidth: 2 });
-      const tail = new THREE.Line(tailGeometry, tailMaterial);
-      comet.add(tail); // Add tail as child of comet
+      // Comet - Removed for simplicity and focus on core features
 
       // Background Dust (subtle)
       const dustGeometry = new THREE.BufferGeometry();
       const dustCount = 1000;
       const dustPos = new Float32Array(dustCount * 3);
       for (let i = 0; i < dustCount; i++) {
-         dustPos[i * 3] = (Math.random() - 0.5) * 200; // Spread dust around
-         dustPos[i * 3 + 1] = (Math.random() - 0.5) * 200;
-         dustPos[i * 3 + 2] = (Math.random() - 0.5) * 200;
+         dustPos[i * 3] = (Math.random() - 0.5) * 300; // Spread dust around more
+         dustPos[i * 3 + 1] = (Math.random() - 0.5) * 300;
+         dustPos[i * 3 + 2] = (Math.random() - 0.5) * 300;
       }
       dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
-      const dustMaterial = new THREE.PointsMaterial({ color: 0x777777, size: 0.05, transparent: true, opacity: 0.4, });
+      const dustMaterial = new THREE.PointsMaterial({ color: 0x777777, size: 0.05, transparent: true, opacity: 0.3, sizeAttenuation: true });
       const dust = new THREE.Points(dustGeometry, dustMaterial);
       scene.add(dust);
-
-      // --- Constellation Placeholder Removed ---
-
 
       // --- DOM Elements ---
       const infoPanel = document.getElementById("infoPanel");
@@ -577,8 +618,6 @@
       const speedUpBtn = document.getElementById('speedUpBtn');
       const slowDownBtn = document.getElementById('slowDownBtn');
       const speedDisplay = document.getElementById('speedDisplay');
-      // Constellation Toggle Element Removed
-
 
       // --- Raycasting ---
       const raycaster = new THREE.Raycaster();
@@ -606,15 +645,9 @@
 
           // Check if a valid ID was retrieved
           if (planetId !== undefined) {
-              // Call the same function used by the dropdown menu
+              // Call the function to focus
               focusOnPlanet(planetId);
           }
-        } else {
-          // Optional: Clicking empty space could potentially stop following
-          // if (isFollowingPlanet) {
-          //    isFollowingPlanet = false;
-          //    focusedPlanetIndex = -1;
-          // }
         }
       });
 
@@ -632,7 +665,7 @@
 
       // Close dropdown if clicking outside
       document.addEventListener("click", (e) => {
-          if (!planetsMenu.contains(e.target)) {
+          if (!planetsMenu.contains(e.target) && planetsDropdown.classList.contains('show')) {
               planetsDropdown.classList.remove('show');
           }
       });
@@ -679,8 +712,6 @@
             }
        });
 
-       // --- Constellation Toggle Event Listener Removed ---
-
 
       // --- Functions ---
 
@@ -721,11 +752,14 @@
 
       function updateLanguageUI() {
           bodyEl.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
-          planetsMenu.firstChild.textContent = uiText.planetsMenu[currentLanguage].trim(); // Update menu title text
+          // Update menu title text (accessing the text node)
+          const planetsMenuTextNode = Array.from(planetsMenu.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+          if(planetsMenuTextNode) {
+              planetsMenuTextNode.textContent = ` ${uiText.planetsMenu[currentLanguage]} `; // Add spaces for padding if needed
+          }
           langToggleBtn.textContent = uiText.langToggle[currentLanguage];
           readMoreBtn.textContent = uiText.readMore[currentLanguage]; // Update button text
           playPauseBtn.textContent = isPaused ? uiText.playBtn[currentLanguage] : uiText.pauseBtn[currentLanguage]; // Update play/pause button text
-          // Constellation button update removed
 
           // Update dropdown items
           planetsDropdown.innerHTML = ''; // Clear existing items
@@ -745,7 +779,7 @@
               planetsDropdown.appendChild(item);
           });
 
-          // If info panel is open, update its content
+           // If info panel is open, update its content
            if (currentlyDisplayedPlanetId !== null) {
                const currentPlanetData = planetsData.find(p => p.id === currentlyDisplayedPlanetId);
                if (currentPlanetData) {
@@ -753,7 +787,8 @@
                    planetNameEl.textContent = currentPlanetData.name[currentLanguage];
                    planetInfoEl.innerHTML = currentPlanetData.info[currentLanguage].replace(/\n/g, "<br>");
                    planetFactEl.textContent = currentPlanetData.fact[currentLanguage];
-                   // Update Read More button text (already done above)
+                   // Update Read More button text
+                   readMoreBtn.textContent = uiText.readMore[currentLanguage];
                    readMoreBtn.setAttribute('data-planet-id', currentPlanetData.id); // Ensure ID is set
 
                    // If extra facts are currently visible, update their language
@@ -794,19 +829,21 @@
           const endTarget = targetPlanet.mesh.position.clone(); // Look at the planet's center
 
           // Calculate desired camera position (offset from the planet)
-          const offsetDistance = targetData.radius * (targetData.id === 0 ? 5 : 8); // Closer for Sun, further for planets
-          const direction = new THREE.Vector3(0, 0.2, 1); // Base direction (slightly above, behind)
-          direction.applyQuaternion(targetPlanet.mesh.quaternion); // Rotate direction based on planet tilt? (might not be needed if tilt is visual only)
+          const offsetDistance = targetData.radius * (targetData.id === 0 ? 6 : 10); // Adjusted offset (slightly further)
+          const direction = new THREE.Vector3(0, 0.3, 1); // Base direction (slightly more above, behind)
+          // Apply camera's current quaternion to the direction vector for smoother transition start
+          direction.applyQuaternion(camera.quaternion);
           direction.normalize();
           const endPosition = endTarget.clone().add(direction.multiplyScalar(offsetDistance));
 
-          const duration = 1500; // Animation duration in ms
+          const duration = 2000; // Increased animation duration in ms for smoothness
           const startTime = Date.now();
 
           function animateCameraFocus() {
               const elapsed = Date.now() - startTime;
               const progress = Math.min(elapsed / duration, 1); // Progress from 0 to 1
-              const easeProgress = 0.5 * (1 - Math.cos(Math.PI * progress)); // Smooth ease-in-out
+              // Smoother ease-in-out function (cubic)
+              const easeProgress = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 
               // Interpolate camera position and target
               camera.position.lerpVectors(startPosition, endPosition, easeProgress);
@@ -818,14 +855,16 @@
               } else {
                   // Animation finished
                   followAnimationId = null;
-                  isFollowingPlanet = true; // Start following the planet
+                  isFollowingPlanet = true; // Start following the planet AFTER animation
                   controls.target.copy(endTarget); // Ensure target is exact
                   camera.position.copy(endPosition); // Ensure position is exact
                   controls.update();
                   displayPlanetInfo(targetData); // Show info AFTER arriving
               }
           }
-          animateCameraFocus(); // Start the animation
+          // Start the animation immediately
+          isFollowingPlanet = false; // Ensure not following during animation
+          animateCameraFocus();
       }
 
 
@@ -834,16 +873,14 @@
         requestAnimationFrame(animate); // Loop
 
         // Get time elapsed since last frame (delta time)
-        // Use clock.getDelta() only if not paused to get actual elapsed time for animation
-        const delta = !isPaused ? clock.getDelta() : 0;
-        // Accumulate total time for things that shouldn't speed up/slow down (like comet)
-        totalElapsedTime += clock.getDelta(); // Always add actual elapsed time
+        const delta = clock.getDelta(); // Get actual delta time first
+        totalElapsedTime += delta; // Accumulate total time always
 
-        // Apply time multiplier to the delta used for physics/animation updates
-        const scaledDelta = delta * timeMultiplier;
+        // Apply time multiplier only if not paused
+        const scaledDelta = !isPaused ? delta * timeMultiplier : 0;
 
-        // Only update planet positions and rotations if not paused
-        if (!isPaused && scaledDelta > 0) {
+        // Only update planet positions and rotations if scaledDelta > 0 (not paused and time moving)
+        if (scaledDelta > 0) {
              // Animate Planets
              planetMeshes.forEach((p, index) => {
                const { mesh, planetData } = p;
@@ -860,35 +897,27 @@
                  mesh.position.z = Math.sin(p.angle) * planetData.distance;
                }
              });
+        } // End of scaledDelta > 0 block
 
-             // Animate Comet (Elliptical Orbit) - Use totalElapsedTime for consistent speed regardless of pause/multiplier
-             const cometTimeFactor = totalElapsedTime * 0.2; // Adjust base speed if needed
-             const cometSemiMajor = 80; // Ellipse dimensions
-             const cometSemiMinor = 50;
-             comet.position.x = Math.cos(cometTimeFactor) * cometSemiMajor;
-             comet.position.z = Math.sin(cometTimeFactor) * cometSemiMinor;
-             comet.position.y = Math.sin(cometTimeFactor * 0.7) * 15; // Add some vertical motion
-             // Point comet tail away from the sun (origin)
-             const dirToSun = comet.position.clone().normalize().negate();
-             comet.lookAt(comet.position.clone().add(dirToSun));
-        }
-
-        // Update camera following logic (needs to run even if paused to maintain view if target moves slightly before pause)
-        if (isFollowingPlanet && focusedPlanetIndex !== -1) {
+        // Update camera following logic (needs to run even if paused to maintain view)
+        if (isFollowingPlanet && focusedPlanetIndex !== -1 && !followAnimationId) { // Only follow if not animating to target
            const targetMesh = planetMeshes[focusedPlanetIndex].mesh;
            const currentTargetPosition = targetMesh.position.clone();
            controls.target.copy(currentTargetPosition); // Keep controls looking at the planet
 
-           // Calculate desired camera offset position smoothly
+           // Calculate desired camera offset position smoothly based on current camera direction relative to planet
            const targetData = planetMeshes[focusedPlanetIndex].planetData;
-           const offsetDistance = targetData.radius * (targetData.id === 0 ? 5 : 8);
-           const direction = new THREE.Vector3(0, 0.2, 1);
-           direction.applyQuaternion(targetMesh.quaternion);
-           direction.normalize();
-           const desiredPosition = currentTargetPosition.clone().add(direction.multiplyScalar(offsetDistance));
+           const offsetDistance = targetData.radius * (targetData.id === 0 ? 6 : 10); // Use consistent offset
+           const offsetDirection = camera.position.clone().sub(currentTargetPosition).normalize(); // Direction from planet to camera
+           const desiredPosition = currentTargetPosition.clone().add(offsetDirection.multiplyScalar(offsetDistance));
 
-           // Smoothly move camera towards the desired offset position
-           camera.position.lerp(desiredPosition, 0.05);
+           // Smoothly move camera towards the desired offset position ONLY if not manually controlled
+           if(!controls.manualRotation && !controls.manualZoom) { // Add hypothetical flags if OrbitControls provided them
+               camera.position.lerp(desiredPosition, 0.08); // Slightly faster lerp for follow
+           } else {
+               // If user is interacting, maybe just update the target but not the camera position lerp?
+               // Or re-enable following smoothly after interaction stops. This part needs refinement based on OrbitControls behavior.
+           }
         }
 
 
@@ -899,9 +928,8 @@
       // --- Initial Setup ---
       updateLanguageUI(); // Populate UI elements with initial language
       updateSpeedDisplay(); // Set initial speed display
+      playPauseBtn.textContent = isPaused ? uiText.playBtn[currentLanguage] : uiText.pauseBtn[currentLanguage]; // Set initial play/pause icon
       animate(); // Start the animation loop
-
-      // Initial Zoom Effect JS block removed
 
       // --- Resize Listener ---
       window.addEventListener("resize", () => {
