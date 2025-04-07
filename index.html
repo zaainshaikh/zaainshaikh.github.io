@@ -183,7 +183,7 @@
       .menu-item, #langToggleBtn, .time-control-btn {
         position: relative;
         color: white;
-        padding: 8px 12px; /* Adjusted padding */
+        padding: 8px 12px; /* Consistent padding */
         margin-left: 8px; /* Slightly reduced space between items */
         cursor: pointer;
         font-family: "Poppins", "Cairo", sans-serif;
@@ -195,7 +195,7 @@
         border: none; /* Removed individual borders */
       }
       .time-control-btn {
-        padding: 8px 10px;
+        /* Padding is now inherited from the rule above */
         margin-left: 4px; /* Closer time controls */
       }
 
@@ -219,7 +219,7 @@
       .dropdown {
         position: absolute;
         top: 100%; /* Position below the menu item */
-        right: 0;
+        right: 0; /* Default LTR positioning */
         margin-top: 4px; /* Add small gap */
         background: rgba(25, 25, 25, 0.95);
         min-width: 180px;
@@ -228,8 +228,13 @@
         display: none;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.15); /* Consistent border */
-        /* border-top: none; Removed */
         z-index: 110;
+      }
+
+      /* --- Added Rule for RTL Dropdown Positioning --- */
+      body[dir="rtl"] .dropdown {
+        right: auto; /* Remove default right positioning */
+        left: 0; /* Position from the left in RTL */
       }
 
       .dropdown.show {
