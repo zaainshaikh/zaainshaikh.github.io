@@ -143,7 +143,7 @@
           background 0.3s ease;
         padding: 0;
         background: rgba(255, 255, 255, 0.1);
-        border: none;
+        border: none; /* Changed from specific border */
         border-radius: 50%;
         display: flex;
         justify-content: center;
@@ -162,15 +162,15 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 50px; /* Increased height slightly for time controls */
-        background: rgba(0, 0, 0, 0.8);
+        height: 50px;
+        background: rgba(0, 0, 0, 0.85); /* Slightly more opaque */
         padding: 0 20px;
         box-sizing: border-box;
         display: flex;
         justify-content: space-between;
         align-items: center;
         z-index: 100;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* Slightly softer border */
       }
 
        /* Container for right-side controls */
@@ -179,32 +179,28 @@
           align-items: center;
       }
 
-      /* Style for individual controls */
-      .menu-item, #langToggleBtn, .time-control-btn, #constellationToggleBtn { /* Added constellation button */
+      /* Style for individual controls in menu - Cleaner look */
+      .menu-item, #langToggleBtn, .time-control-btn {
         position: relative;
         color: white;
-        padding: 8px 15px;
-        margin-left: 10px; /* Space between items */
+        padding: 8px 12px; /* Adjusted padding */
+        margin-left: 8px; /* Slightly reduced space between items */
         cursor: pointer;
         font-family: "Poppins", "Cairo", sans-serif;
         border-radius: 4px;
         transition: background 0.3s ease, color 0.3s ease;
         font-size: 14px;
         user-select: none;
-        background-color: rgba(255, 255, 255, 0.1); /* Subtle background */
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background-color: rgba(255, 255, 255, 0.08); /* Slightly less visible background */
+        border: none; /* Removed individual borders */
       }
       .time-control-btn {
-        padding: 8px 10px; /* Slightly smaller padding for time buttons */
-        margin-left: 5px;
-      }
-      #constellationToggleBtn { /* Specific style if needed */
-          margin-left: 10px;
+        padding: 8px 10px;
+        margin-left: 4px; /* Closer time controls */
       }
 
-
-      .menu-item:hover, #langToggleBtn:hover, .time-control-btn:hover, #constellationToggleBtn:hover { /* Added constellation button hover */
-        background: rgba(255, 255, 255, 0.25);
+      .menu-item:hover, #langToggleBtn:hover, .time-control-btn:hover {
+        background: rgba(255, 255, 255, 0.2); /* Keep hover distinct */
         color: #eee;
       }
 
@@ -212,9 +208,9 @@
        #speedDisplay {
            color: #ccc;
            font-size: 13px;
-           margin-left: 10px;
-           padding: 8px 0; /* Align vertically */
-           min-width: 50px; /* Give it some space */
+           margin-left: 8px; /* Match menu item spacing */
+           padding: 8px 5px; /* Adjusted padding */
+           min-width: 40px; /* Slightly reduced width */
            text-align: center;
            user-select: none;
        }
@@ -222,16 +218,17 @@
 
       .dropdown {
         position: absolute;
-        top: 100%;
+        top: 100%; /* Position below the menu item */
         right: 0;
+        margin-top: 4px; /* Add small gap */
         background: rgba(25, 25, 25, 0.95);
         min-width: 180px;
-        border-radius: 0 0 6px 6px;
+        border-radius: 6px; /* Round all corners */
         overflow: hidden;
         display: none;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-top: none;
+        border: 1px solid rgba(255, 255, 255, 0.15); /* Consistent border */
+        /* border-top: none; Removed */
         z-index: 110;
       }
 
@@ -287,20 +284,16 @@
             margin-left: auto; /* Align button right in LTR */
         }
         /* RTL adjustments for menu items */
-        body[dir="rtl"] .menu-item, body[dir="rtl"] #langToggleBtn, body[dir="rtl"] .time-control-btn, body[dir="rtl"] #speedDisplay, body[dir="rtl"] #constellationToggleBtn {
+        body[dir="rtl"] .menu-item, body[dir="rtl"] #langToggleBtn, body[dir="rtl"] .time-control-btn, body[dir="rtl"] #speedDisplay {
             margin-left: 0;
-            margin-right: 10px;
+            margin-right: 8px; /* Match adjusted spacing */
         }
          body[dir="rtl"] .time-control-btn {
-            margin-right: 5px;
+            margin-right: 4px; /* Match closer time controls */
          }
          body[dir="rtl"] #speedDisplay {
-             margin-right: 10px;
+             margin-right: 8px; /* Match menu item spacing */
          }
-         body[dir="rtl"] #constellationToggleBtn {
-             margin-right: 10px;
-         }
-
 
     </style>
   </head>
@@ -308,8 +301,7 @@
     <div id="menuBar">
       <div id="title">FalakZoom</div>
       <div class="controls-right">
-         <button id="constellationToggleBtn">Show Constellations</button>
-        <button class="time-control-btn" id="slowDownBtn">⏪</button>
+         <button class="time-control-btn" id="slowDownBtn">⏪</button>
         <button class="time-control-btn" id="playPauseBtn">⏸️</button>
         <button class="time-control-btn" id="speedUpBtn">⏩</button>
         <span id="speedDisplay">1x</span>
@@ -344,9 +336,8 @@
           langToggle: { ar: "English", en: "العربية" },
           readMore: { ar: "اقرأ المزيد", en: "Read More" },
           playBtn: { ar: "▶️", en: "▶️" },
-          pauseBtn: { ar: "⏸️", en: "⏸️" },
-          showConstellations: { ar: "إظهار الأبراج", en: "Show Constellations" },
-          hideConstellations: { ar: "إخفاء الأبراج", en: "Hide Constellations" }
+          pauseBtn: { ar: "⏸️", en: "⏸️" }
+          // Constellation text removed
       };
 
       // --- Planet Data with Multilingual Support & Extra Facts ---
@@ -561,67 +552,7 @@
       const dust = new THREE.Points(dustGeometry, dustMaterial);
       scene.add(dust);
 
-      // --- Constellation Placeholder ---
-      const constellationGroup = new THREE.Group(); // Group to hold all constellation parts
-      const placeholderConstellationData = {
-          name: "Placeholder Major",
-          stars: [ // Simple x, y, z coordinates (far away)
-              { id: 1, x: 500, y: 500, z: -1000 },
-              { id: 2, x: 600, y: 550, z: -1050 },
-              { id: 3, x: 550, y: 400, z: -950 },
-              { id: 4, x: 700, y: 450, z: -1100 },
-          ],
-          lines: [ // Connect stars by id pairs
-              [1, 2], [1, 3], [2, 4], [3, 4]
-          ]
-      };
-
-      function createConstellations(data) {
-          const starPositions = [];
-          const starMap = {}; // To easily find star vectors by id for lines
-          data.stars.forEach(star => {
-              starPositions.push(star.x, star.y, star.z);
-              starMap[star.id] = new THREE.Vector3(star.x, star.y, star.z);
-          });
-
-          // Create stars
-          const starsGeom = new THREE.BufferGeometry();
-          starsGeom.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-          const starsMat = new THREE.PointsMaterial({
-              color: 0xffddaa, // Pale yellow stars
-              size: 3,
-              sizeAttenuation: false // Keep size constant regardless of distance
-          });
-          const constellationStars = new THREE.Points(starsGeom, starsMat);
-          constellationGroup.add(constellationStars);
-
-          // Create lines
-          const linePoints = [];
-          data.lines.forEach(linePair => {
-              const star1 = starMap[linePair[0]];
-              const star2 = starMap[linePair[1]];
-              if (star1 && star2) {
-                  linePoints.push(star1.x, star1.y, star1.z);
-                  linePoints.push(star2.x, star2.y, star2.z);
-              }
-          });
-
-          if (linePoints.length > 0) {
-              const linesGeom = new THREE.BufferGeometry();
-              linesGeom.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
-              const linesMat = new THREE.LineBasicMaterial({
-                  color: 0xaaaaee, // Pale blue lines
-                  transparent: true,
-                  opacity: 0.6
-              });
-              const constellationLines = new THREE.LineSegments(linesGeom, linesMat);
-              constellationGroup.add(constellationLines);
-          }
-      }
-
-      createConstellations(placeholderConstellationData);
-      constellationGroup.visible = false; // Start hidden
-      scene.add(constellationGroup);
+      // --- Constellation Placeholder Removed ---
 
 
       // --- DOM Elements ---
@@ -641,8 +572,7 @@
       const speedUpBtn = document.getElementById('speedUpBtn');
       const slowDownBtn = document.getElementById('slowDownBtn');
       const speedDisplay = document.getElementById('speedDisplay');
-      // Constellation Toggle Element
-      const constellationToggleBtn = document.getElementById('constellationToggleBtn');
+      // Constellation Toggle Element Removed
 
 
       // --- Raycasting ---
@@ -744,11 +674,7 @@
             }
        });
 
-       // --- Constellation Toggle Event Listener ---
-       constellationToggleBtn.addEventListener('click', () => {
-           constellationGroup.visible = !constellationGroup.visible;
-           updateLanguageUI(); // Update button text
-       });
+       // --- Constellation Toggle Event Listener Removed ---
 
 
       // --- Functions ---
@@ -794,8 +720,7 @@
           langToggleBtn.textContent = uiText.langToggle[currentLanguage];
           readMoreBtn.textContent = uiText.readMore[currentLanguage]; // Update button text
           playPauseBtn.textContent = isPaused ? uiText.playBtn[currentLanguage] : uiText.pauseBtn[currentLanguage]; // Update play/pause button text
-          // Update constellation toggle button text
-          constellationToggleBtn.textContent = constellationGroup.visible ? uiText.hideConstellations[currentLanguage] : uiText.showConstellations[currentLanguage];
+          // Constellation button update removed
 
           // Update dropdown items
           planetsDropdown.innerHTML = ''; // Clear existing items
