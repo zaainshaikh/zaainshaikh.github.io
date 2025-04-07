@@ -457,7 +457,7 @@
         }
       ];
 
-      // --- THREE.js Setup (Unchanged from previous version) ---
+      // --- THREE.js Setup (Unchanged from previous versions) ---
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75,window.innerWidth / window.innerHeight, 0.1, 2000);
       camera.position.set(0, 50, 100);
@@ -510,7 +510,7 @@
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
 
-     // --- Event Listeners ---
+      // --- Event Listeners ---
       window.addEventListener("click", (event) => {
         // Prevent clicks on menu/infopanel from triggering raycast
         if (event.target.closest('#menuBar') || event.target.closest('#infoPanel')) {
@@ -523,7 +523,7 @@
 
         const intersects = raycaster.intersectObjects(planetMeshes.map((p) => p.mesh));
 
-        // ***** MODIFICATION START *****
+        // ***** THIS IS THE MODIFIED PART for click-to-follow *****
         if (intersects.length > 0) {
           const clickedPlanetMesh = intersects[0].object;
           const planetId = clickedPlanetMesh.userData.id; // Get the ID stored earlier
@@ -533,13 +533,9 @@
               // Call the same function used by the dropdown menu
               focusOnPlanet(planetId);
           }
-          // No need for the old code that just showed the panel and stopped follow
         }
-        // ***** MODIFICATION END *****
+        // ***** END OF MODIFICATION *****
          else {
-           if (isFollowingPlanet) {
-             isFollowingPlanet = false;
-             focusedPlanetIndex = -1;
             // Optional: Clicking empty space could potentially stop following
             // if (isFollowingPlanet) {
             //    isFollowingPlanet = false;
@@ -547,8 +543,6 @@
             // }
         }
       });
-
-      // ... (rest of the event listeners: closeBtn, planetsMenu, etc. remain the same)
 
       closeBtn.addEventListener("click", () => {
         infoPanel.style.display = "none";
@@ -560,9 +554,13 @@
         e.stopPropagation(); planetsDropdown.classList.toggle("show");
       });
 
+      // Close dropdown if clicking outside
       document.addEventListener("click", (e) => {
-          if (!planetsMenu.contains(e.target)) planetsDropdown.classList.remove('show');
+          if (!planetsMenu.contains(e.target)) {
+              planetsDropdown.classList.remove('show');
+          }
       });
+
 
       langToggleBtn.addEventListener("click", () => {
           currentLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
@@ -679,7 +677,7 @@
           const duration = 1500; const startTime = Date.now();
           function animateCameraFocus() {
               const elapsed = Date.now() - startTime; const progress = Math.min(elapsed / duration, 1);
-              const easeProgress = 0.5 * (1 - Math.cos(Math.PI * progress));
+              const easeProgress = 0.5 * (1 - Math.cos(Math.PI * progress)); // Ease-in-out
               camera.position.lerpVectors(startPosition, endPosition, easeProgress);
               controls.target.lerpVectors(startTarget, endTarget, easeProgress); controls.update();
               if (progress < 1) { followAnimationId = requestAnimationFrame(animateCameraFocus); }
