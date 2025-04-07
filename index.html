@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -127,87 +128,23 @@
         font-size: 24px;
         font-weight: 600;
       }
-      
-      /* Language Toggle Styles */
-      .language-toggle {
-        position: relative;
-        display: inline-block;
-        margin-left: auto;
-        margin-right: 20px;
-      }
-      
-      .language-btn {
-        color: white;
-        padding: 8px 15px;
-        cursor: pointer;
-        font-family: 'Poppins', sans-serif;
-        border-radius: 4px;
-        transition: background 0.3s ease;
-      }
-      
-      .language-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
-      }
-      
-      .language-dropdown {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: rgba(0, 0, 0, 0.9);
-        min-width: 100px;
-        border-radius: 4px;
-        overflow: hidden;
-        display: none;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        z-index: 101;
-      }
-      
-      .language-dropdown.show {
-        display: block;
-      }
-      
-      .language-option {
-        padding: 10px 15px;
-        color: white;
-        text-decoration: none;
-        display: block;
-        transition: background 0.2s ease;
-      }
-      
-      .language-option:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-      
-      .menu-container {
-        display: flex;
-        align-items: center;
-      }
     </style>
   </head>
   <body>
     <div id="menuBar">
       <div id="title">FalakZoom</div>
-      <div class="menu-container">
-        <div class="language-toggle">
-          <div class="language-btn" id="currentLanguage">العربية</div>
-          <div class="language-dropdown" id="languageDropdown">
-            <div class="language-option" data-lang="ar">العربية</div>
-            <div class="language-option" data-lang="en">English</div>
-          </div>
-        </div>
-        <div class="menu-item" id="planetsMenu">
-          الكواكب
-          <div class="dropdown" id="planetsDropdown">
-            <a href="#" class="dropdown-item" data-planet="0">الشمس</a>
-            <a href="#" class="dropdown-item" data-planet="1">عطارد</a>
-            <a href="#" class="dropdown-item" data-planet="2">الزهرة</a>
-            <a href="#" class="dropdown-item" data-planet="3">الأرض</a>
-            <a href="#" class="dropdown-item" data-planet="4">المريخ</a>
-            <a href="#" class="dropdown-item" data-planet="5">المشتري</a>
-            <a href="#" class="dropdown-item" data-planet="6">زحل</a>
-            <a href="#" class="dropdown-item" data-planet="7">أورانوس</a>
-            <a href="#" class="dropdown-item" data-planet="8">نبتون</a>
-          </div>
+      <div class="menu-item" id="planetsMenu">
+        الكواكب
+        <div class="dropdown" id="planetsDropdown">
+          <a href="#" class="dropdown-item" data-planet="0">الشمس</a>
+          <a href="#" class="dropdown-item" data-planet="1">عطارد</a>
+          <a href="#" class="dropdown-item" data-planet="2">الزهرة</a>
+          <a href="#" class="dropdown-item" data-planet="3">الأرض</a>
+          <a href="#" class="dropdown-item" data-planet="4">المريخ</a>
+          <a href="#" class="dropdown-item" data-planet="5">المشتري</a>
+          <a href="#" class="dropdown-item" data-planet="6">زحل</a>
+          <a href="#" class="dropdown-item" data-planet="7">أورانوس</a>
+          <a href="#" class="dropdown-item" data-planet="8">نبتون</a>
         </div>
       </div>
     </div>
@@ -274,115 +211,88 @@
       const stars = new THREE.Points(starGeometry, starMaterial);
       scene.add(stars);
       
-      // Planets Data with Detailed Information in both languages
+      // Planets Data with Detailed Information
       const planets = [{
-        name: { ar: "الشمس", en: "Sun" },
+        name: "الشمس",
         radius: 5,
         distance: 0,
         speed: 0,
         tilt: 0,
         rotation: 0.01,
         texture: "sun.jpg",
-        info: {
-          ar: "القطر: 1.391 مليون كيلومتر\nالكتلة: 1.989 × 10³⁰ كيلوغرام\nالعمر: 4.6 مليار سنة\nالنوع: نجم من النوع G في التسلسل الرئيسي\nدرجة حرارة النواة: 15 مليون درجة مئوية\nيحتوي على 99.86% من كتلة النظام الشمسي",
-          en: "Diameter: 1.391 million km\nMass: 1.989 × 10³⁰ kg\nAge: 4.6 billion years\nType: G-type main-sequence star\nCore temperature: 15 million °C\nContains 99.86% of the solar system's mass"
-        }
+        info: "القطر: 1.391 مليون كيلومتر\nالكتلة: 1.989 × 10³⁰ كيلوغرام\nالعمر: 4.6 مليار سنة\nالنوع: نجم من النوع G في التسلسل الرئيسي\nدرجة حرارة النواة: 15 مليون درجة مئوية\nيحتوي على 99.86% من كتلة النظام الشمسي"
       }, {
-        name: { ar: "عطارد", en: "Mercury" },
+        name: "عطارد",
         radius: 0.5,
         distance: 10,
         speed: 0.0125,
         tilt: 0.034,
         rotation: 0.003,
         texture: "mercury.jpg",
-        info: {
-          ar: "القطر: 4,879 كيلومتر\nالكتلة: 3.3 × 10²³ كيلوغرام\nالمدار: 88 يومًا\nدرجة حرارة السطح: من -173°C إلى 427°C\nلا يحتوي على غلاف جوي\nأصغر كواكب المجموعة الشمسية، كوكب صخري مليء بالفوهات",
-          en: "Diameter: 4,879 km\nMass: 3.3 × 10²³ kg\nOrbit: 88 days\nSurface temperature: -173°C to 427°C\nNo atmosphere\nSmallest planet in the solar system, rocky and heavily cratered"
-        }
+        info: "القطر: 4,879 كيلومتر\nالكتلة: 3.3 × 10²³ كيلوغرام\nالمدار: 88 يومًا\nدرجة حرارة السطح: من -173°C إلى 427°C\nلا يحتوي على غلاف جوي\nأصغر كواكب المجموعة الشمسية، كوكب صخري مليء بالفوهات"
       }, {
-        name: { ar: "الزهرة", en: "Venus" },
+        name: "الزهرة",
         radius: 0.8,
         distance: 15,
         speed: 0.004375,
         tilt: 177.4,
         rotation: 0.0004,
         texture: "venus.jpg",
-        info: {
-          ar: "القطر: 12,104 كيلومتر\nالكتلة: 4.87 × 10²⁴ كيلوغرام\nالمدار: 225 يومًا\nدرجة حرارة السطح: 464°C\nغلاف جوي كثيف من ثاني أكسيد الكربون\nأسخن كواكب المجموعة الشمسية، يدور بعكس اتجاه الدوران المعتاد (حركة تراجعية)",
-          en: "Diameter: 12,104 km\nMass: 4.87 × 10²⁴ kg\nOrbit: 225 days\nSurface temperature: 464°C\nDense CO₂ atmosphere\nHottest planet, rotates backwards (retrograde rotation)"
-        }
+        info: "القطر: 12,104 كيلومتر\nالكتلة: 4.87 × 10²⁴ كيلوغرام\nالمدار: 225 يومًا\nدرجة حرارة السطح: 464°C\nغلاف جوي كثيف من ثاني أكسيد الكربون\nأسخن كواكب المجموعة الشمسية، يدور بعكس اتجاه الدوران المعتاد (حركة تراجعية)"
       }, {
-        name: { ar: "الأرض", en: "Earth" },
+        name: "الأرض",
         radius: 1,
         distance: 20,
         speed: 0.003125,
         tilt: 23.5,
         rotation: 0.05,
         texture: "earth.jpg",
-        info: {
-          ar: "القطر: 12,742 كيلومتر\nالكتلة: 5.97 × 10²⁴ كيلوغرام\nالمدار: 365.25 يومًا\nدرجة حرارة السطح: من -88°C إلى 58°C\nمغطاة بنسبة 71% بالمياه\nالكوكب الوحيد المعروف بوجود الحياة، وله قمر واحد",
-          en: "Diameter: 12,742 km\nMass: 5.97 × 10²⁴ kg\nOrbit: 365.25 days\nSurface temperature: -88°C to 58°C\n71% water coverage\nOnly known planet with life, has one moon"
-        }
+        info: "القطر: 12,742 كيلومتر\nالكتلة: 5.97 × 10²⁴ كيلوغرام\nالمدار: 365.25 يومًا\nدرجة حرارة السطح: من -88°C إلى 58°C\nمغطاة بنسبة 71% بالمياه\nالكوكب الوحيد المعروف بوجود الحياة، وله قمر واحد"
       }, {
-        name: { ar: "المريخ", en: "Mars" },
+        name: "المريخ",
         radius: 0.7,
         distance: 25,
         speed: 0.0025,
         tilt: 25.2,
         rotation: 0.048,
         texture: "mars.jpg",
-        info: {
-          ar: "القطر: 6,792 كيلومتر\nالكتلة: 6.42 × 10²³ كيلوغرام\nالمدار: 687 يومًا\nدرجة حرارة السطح: من -153°C إلى 20°C\nغلاف جوي رقيق من ثاني أكسيد الكربون\nيظهر باللون الأحمر بسبب أكسيد الحديد، وله قمران",
-          en: "Diameter: 6,792 km\nMass: 6.42 × 10²³ kg\nOrbit: 687 days\nSurface temperature: -153°C to 20°C\nThin CO₂ atmosphere\nRed color from iron oxide, has two moons"
-        }
+        info: "القطر: 6,792 كيلومتر\nالكتلة: 6.42 × 10²³ كيلوغرام\nالمدار: 687 يومًا\nدرجة حرارة السطح: من -153°C إلى 20°C\nغلاف جوي رقيق من ثاني أكسيد الكربون\nيظهر باللون الأحمر بسبب أكسيد الحديد، وله قمران"
       }, {
-        name: { ar: "المشتري", en: "Jupiter" },
+        name: "المشتري",
         radius: 2.5,
         distance: 35,
         speed: 0.00125,
         tilt: 3.1,
         rotation: 0.1,
         texture: "jupiter.jpg",
-        info: {
-          ar: "القطر: 139,820 كيلومتر\nالكتلة: 1.898 × 10²⁷ كيلوغرام\nالمدار: 11.86 سنة\nدرجة حرارة السطح: -145°C\nعملاق غازي\nأكبر كواكب المجموعة الشمسية، يحتوي على البقعة الحمراء العظيمة، وله 79 قمرًا",
-          en: "Diameter: 139,820 km\nMass: 1.898 × 10²⁷ kg\nOrbit: 11.86 years\nSurface temperature: -145°C\nGas giant\nLargest planet, has Great Red Spot, 79 moons"
-        }
+        info: "القطر: 139,820 كيلومتر\nالكتلة: 1.898 × 10²⁷ كيلوغرام\nالمدار: 11.86 سنة\nدرجة حرارة السطح: -145°C\nعملاق غازي\nأكبر كواكب المجموعة الشمسية، يحتوي على البقعة الحمراء العظيمة، وله 79 قمرًا"
       }, {
-        name: { ar: "زحل", en: "Saturn" },
+        name: "زحل",
         radius: 2,
         distance: 45,
         speed: 0.0009375,
         tilt: 26.7,
         rotation: 0.09,
         texture: "saturn.jpg",
-        info: {
-          ar: "القطر: 116,460 كيلومتر\nالكتلة: 5.68 × 10²⁶ كيلوغرام\nالمدار: 29.46 سنة\nدرجة حرارة السطح: -184°C\nيتميز بحلقاته الشهيرة\nعملاق غازي، وله 83 قمرًا في مدارات مختلفة",
-          en: "Diameter: 116,460 km\nMass: 5.68 × 10²⁶ kg\nOrbit: 29.46 years\nSurface temperature: -184°C\nFamous for its rings\nGas giant, has 83 moons with varied orbits"
-        }
+        info: "القطر: 116,460 كيلومتر\nالكتلة: 5.68 × 10²⁶ كيلوغرام\nالمدار: 29.46 سنة\nدرجة حرارة السطح: -184°C\nيتميز بحلقاته الشهيرة\nعملاق غازي، وله 83 قمرًا في مدارات مختلفة"
       }, {
-        name: { ar: "أورانوس", en: "Uranus" },
+        name: "أورانوس",
         radius: 1.5,
         distance: 55,
         speed: 0.0005,
         tilt: 97.8,
         rotation: 0.06,
         texture: "uranus.jpg",
-        info: {
-          ar: "القطر: 50,724 كيلومتر\nالكتلة: 8.68 × 10²⁵ كيلوغرام\nالمدار: 84 سنة\nدرجة حرارة السطح: -224°C\nعملاق جليدي\nيدور بشكل جانبي، يمتلك حلقات باهتة، وله 27 قمرًا",
-          en: "Diameter: 50,724 km\nMass: 8.68 × 10²⁵ kg\nOrbit: 84 years\nSurface temperature: -224°C\nIce giant\nRotates on its side, has faint rings, 27 moons"
-        }
+        info: "القطر: 50,724 كيلومتر\nالكتلة: 8.68 × 10²⁵ كيلوغرام\nالمدار: 84 سنة\nدرجة حرارة السطح: -224°C\nعملاق جليدي\nيدور بشكل جانبي، يمتلك حلقات باهتة، وله 27 قمرًا"
       }, {
-        name: { ar: "نبتون", en: "Neptune" },
+        name: "نبتون",
         radius: 1.5,
         distance: 65,
         speed: 0.000375,
         tilt: 28.3,
         rotation: 0.07,
         texture: "neptune.jpg",
-        info: {
-          ar: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -201°C\nعملاق جليدي\nيتميز بلونه الأزرق العميق، يمتلك أقوى الرياح في المجموعة الشمسية، وله 14 قمرًا",
-          en: "Diameter: 49,244 km\nMass: 1.02 × 10²⁶ kg\nOrbit: 164.8 years\nSurface temperature: -201°C\nIce giant\nDeep blue color, strongest winds in solar system, 14 moons"
-        }
+        info: "القطر: 49,244 كيلومتر\nالكتلة: 1.02 × 10²⁶ كيلوغرام\nالمدار: 164.8 سنة\nدرجة حرارة السطح: -201°C\nعملاق جليدي\nيتميز بلونه الأزرق العميق، يمتلك أقوى الرياح في المجموعة الشمسية، وله 14 قمرًا"
       }];
       
       // Planet Meshes and Circular Orbits
@@ -391,13 +301,13 @@
         const geometry = new THREE.SphereGeometry(planet.radius, 128, 128);
         const material = new THREE.MeshStandardMaterial({
           color: 0xffffff,
-          emissive: planet.name.ar === "الشمس" ? 0xffff00 : 0x000000,
-          emissiveIntensity: planet.name.ar === "الشمس" ? 2 : 0
+          emissive: planet.name === "الشمس" ? 0xffff00 : 0x000000,
+          emissiveIntensity: planet.name === "الشمس" ? 2 : 0
         });
         loader.load(`textures/${planet.texture}`,
           (texture) => {
             material.map = texture;
-            if (planet.name.ar === "الشمس") {
+            if (planet.name === "الشمس") {
               material.emissive = new THREE.Color(0xffff00);
               material.emissiveIntensity = 1.5;
             }
@@ -414,25 +324,17 @@
           
           const colorMap = {
             "عطارد": 0xaaaaaa,
-            "Mercury": 0xaaaaaa,
             "الزهرة": 0xffcc99,
-            "Venus": 0xffcc99,
             "الأرض": 0x3399ff,
-            "Earth": 0x3399ff,
             "المريخ": 0xff3333,
-            "Mars": 0xff3333,
             "المشتري": 0xffaa33,
-            "Jupiter": 0xffaa33,
             "زحل": 0xffdd77,
-            "Saturn": 0xffdd77,
             "أورانوس": 0x66ccff,
-            "Uranus": 0x66ccff,
-            "نبتون": 0x3366cc,
-            "Neptune": 0x3366cc
+            "نبتون": 0x3366cc
           };
           
           const orbitMaterial = new THREE.MeshBasicMaterial({
-            color: colorMap[planet.name.ar] || colorMap[planet.name.en] || 0xffffff,
+            color: colorMap[planet.name] || 0xffffff,
             side: THREE.DoubleSide,
             transparent: true,
             opacity: 0.7
@@ -542,59 +444,6 @@
       const planetInfo = document.getElementById('planetInfo');
       const closeBtn = document.getElementById('closeBtn');
       
-      // Current language (default Arabic)
-      let currentLanguage = 'ar';
-      
-      // Update UI language
-      function updateLanguage(lang) {
-        currentLanguage = lang;
-        
-        // Update planets menu text
-        document.getElementById('planetsMenu').textContent = lang === 'ar' ? 'الكواكب' : 'Planets';
-        
-        // Update current language button text
-        const currentLangBtn = document.getElementById('currentLanguage');
-        currentLangBtn.textContent = lang === 'ar' ? 'العربية' : 'English';
-        
-        // Update dropdown items
-        const dropdownItems = document.querySelectorAll('#planetsDropdown .dropdown-item');
-        dropdownItems.forEach((item, index) => {
-          item.textContent = planets[index].name[lang];
-        });
-        
-        // Update info panel if visible
-        if (infoPanel.style.display === 'block' && focusedPlanetIndex >= 0) {
-          const planet = planets[focusedPlanetIndex];
-          planetName.textContent = planet.name[lang];
-          planetInfo.innerHTML = planet.info[lang].replace(/\n/g, '<br>');
-        }
-      }
-      
-      // Language dropdown functionality
-      const currentLangBtn = document.getElementById('currentLanguage');
-      const languageDropdown = document.getElementById('languageDropdown');
-      
-      currentLangBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        languageDropdown.classList.toggle('show');
-      });
-      
-      document.querySelectorAll('.language-option').forEach(option => {
-        option.addEventListener('click', (e) => {
-          e.preventDefault();
-          const lang = option.getAttribute('data-lang');
-          updateLanguage(lang);
-          languageDropdown.classList.remove('show');
-        });
-      });
-      
-      document.addEventListener('click', () => {
-        languageDropdown.classList.remove('show');
-      });
-      
-      // Initialize with Arabic
-      updateLanguage('ar');
-      
       window.addEventListener('click', (event) => {
         // Check if click was on menu bar
         if (event.clientY < 50) return;
@@ -606,8 +455,8 @@
         if (intersects.length > 0) {
           const planet = intersects[0].object;
           const data = planetMeshes.find(p => p.mesh === planet).planet;
-          planetName.textContent = data.name[currentLanguage];
-          planetInfo.innerHTML = data.info[currentLanguage].replace(/\n/g, '<br>');
+          planetName.textContent = data.name;
+          planetInfo.innerHTML = data.info.replace(/\n/g, '<br>');
           infoPanel.style.display = 'block';
         }
       });
@@ -671,8 +520,8 @@
             requestAnimationFrame(animateCamera);
           } else {
             isFollowingPlanet = true;
-            planetName.textContent = planet.planet.name[currentLanguage];
-            planetInfo.innerHTML = planet.planet.info[currentLanguage].replace(/\n/g, '<br>');
+            planetName.textContent = planet.planet.name;
+            planetInfo.innerHTML = planet.planet.info.replace(/\n/g, '<br>');
             infoPanel.style.display = 'block';
           }
         }
@@ -684,7 +533,6 @@
       function animate() {
         requestAnimationFrame(animate);
         
-        // Update planet positions and rotations
         planetMeshes.forEach((planet, index) => {
           const { mesh, planet: data } = planet;
           if (data.distance > 0) {
@@ -694,7 +542,6 @@
           }
           mesh.rotation.y += data.rotation;
           
-          // If following a planet, update camera position
           if (isFollowingPlanet && index === focusedPlanetIndex) {
             const targetPosition = mesh.position.clone();
             if (index === 0) {
@@ -708,24 +555,19 @@
           }
         });
         
-        // Update comet position
         const cometAngle = Date.now() * 0.0005;
         comet.position.x = Math.cos(cometAngle) * 80;
         comet.position.z = Math.sin(cometAngle) * 80;
         comet.position.y = Math.sin(cometAngle * 2) * 20;
         
-        // Only update controls if not following a planet
         if (!isFollowingPlanet) {
           controls.update();
         }
-        
         renderer.render(scene, camera);
       }
       
-      // Start animation
       animate();
       
-      // Handle window resize
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
