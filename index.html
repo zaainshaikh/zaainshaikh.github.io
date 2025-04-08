@@ -15,150 +15,160 @@
     <style>
       body {
         margin: 0;
-        overflow: hidden;
+         overflow: hidden;
         background: black;
         font-family: "Poppins", "Cairo", Arial, sans-serif; /* Added Cairo */
-      }
+       }
 
       #infoPanel {
         position: absolute;
-        top: 70px;
+         top: 70px;
         left: 20px;
         background: rgba(0, 0, 0, 0.88); /* Slightly more opaque */
         color: white;
-        padding: 20px;
+         padding: 20px;
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.4);
         display: none;
-        max-width: 400px; /* Slightly wider for more content */
-        max-height: calc(100vh - 90px); /* Max height */
-        overflow-y: auto; /* Allow scrolling if content exceeds height */
+        max-width: 400px;
+ /* Slightly wider for more content */
+        max-height: calc(100vh - 90px);
+ /* Max height */
+        overflow-y: auto;
+ /* Allow scrolling if content exceeds height */
         font-size: 14px;
         line-height: 1.7;
-        z-index: 50;
+         z-index: 50;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-        scrollbar-width: thin; /* Firefox */
-        scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.5); /* Firefox */
+        scrollbar-width: thin;
+ /* Firefox */
+        scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.5);
+ /* Firefox */
       }
        /* Webkit scrollbar styles */
       #infoPanel::-webkit-scrollbar {
         width: 8px;
-      }
+       }
       #infoPanel::-webkit-scrollbar-track {
         background: rgba(0, 0, 0, 0.5);
-        border-radius: 10px;
+         border-radius: 10px;
       }
        #infoPanel::-webkit-scrollbar-thumb {
         background-color: rgba(255, 255, 255, 0.3);
-        border-radius: 10px;
+         border-radius: 10px;
         border: 2px solid rgba(0, 0, 0, 0.5);
       }
 
 
       #infoPanel h2 {
           margin-top: 0;
-          margin-bottom: 15px;
+           margin-bottom: 15px;
           font-size: 18px;
           font-weight: 600;
           border-bottom: 1px solid rgba(255, 255, 255, 0.3);
           padding-bottom: 8px;
-      }
+       }
 
       #infoPanel p {
           margin-bottom: 10px;
-      }
+       }
 
        #infoPanel .fact {
            font-style: italic;
-           color: #cccccc;
+            color: #cccccc;
            margin-top: 15px;
            padding-top: 10px;
            border-top: 1px dashed rgba(255, 255, 255, 0.2);
-       }
+        }
 
        /* Read More Button Styles */
        #readMoreBtn {
            background-color: rgba(255, 255, 255, 0.15);
-           color: #e0e0e0;
+            color: #e0e0e0;
            border: 1px solid rgba(255, 255, 255, 0.3);
            padding: 8px 15px;
            border-radius: 5px;
            cursor: pointer;
            font-family: inherit;
            font-size: 13px;
-           margin-top: 15px;
+            margin-top: 15px;
            transition: background-color 0.3s, color 0.3s;
            display: block; /* Make it block to take full width if needed */
-           width: fit-content; /* Adjust width to content */
+           width: fit-content;
+ /* Adjust width to content */
        }
         #readMoreBtn:hover {
             background-color: rgba(255, 255, 255, 0.25);
-            color: white;
+             color: white;
         }
 
        /* Extra Facts Container Styles */
        #extraFactsContainer {
            margin-top: 15px;
-           padding-top: 15px;
+            padding-top: 15px;
            border-top: 1px solid rgba(255, 255, 255, 0.3);
        }
         #extraFactsContainer p {
-            font-size: 13px; /* Slightly smaller */
-            color: #bbbbbb; /* Slightly dimmer */
+            font-size: 13px;
+ /* Slightly smaller */
+            color: #bbbbbb;
+ /* Slightly dimmer */
             margin-bottom: 8px;
-            padding-left: 10px; /* Indent facts */
+            padding-left: 10px;
+ /* Indent facts */
             position: relative;
-        }
+       }
          /* Add bullet points visually */
          #extraFactsContainer p::before {
             content: '•';
-            position: absolute;
+             position: absolute;
             left: -2px; /* Adjust position based on language direction */
             top: 0;
-            color: #66ccff; /* Accent color */
+             color: #66ccff; /* Accent color */
          }
           /* Adjust bullet for RTL */
           [dir="rtl"] #extraFactsContainer p {
             padding-left: 0;
-            padding-right: 10px;
+             padding-right: 10px;
           }
           [dir="rtl"] #extraFactsContainer p::before {
              left: auto;
-             right: -2px;
+              right: -2px;
           }
 
 
       #closeBtn {
         position: absolute;
-        top: 10px;
+         top: 10px;
         right: 10px; /* Default to right */
         width: 28px;
         height: 28px;
-        font-size: 16px;
+         font-size: 16px;
         font-weight: bold;
         color: #ff6b6b;
         cursor: pointer;
         transition: transform 0.3s ease, color 0.3s ease,
           background 0.3s ease;
-        padding: 0;
+         padding: 0;
         background: rgba(255, 255, 255, 0.1);
         border: none;
         border-radius: 50%;
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 51; /* Ensure it's above content */
+        z-index: 51;
+ /* Ensure it's above content */
       }
 
       #closeBtn:hover {
         color: #ff4757;
-        transform: scale(1.1) rotate(90deg);
+         transform: scale(1.1) rotate(90deg);
         background: rgba(255, 255, 255, 0.2);
       }
 
       #menuBar {
         position: absolute;
-        top: 0;
+         top: 0;
         left: 0;
         width: 100%;
         height: 50px;
@@ -166,72 +176,93 @@
         padding: 0 20px;
         box-sizing: border-box;
         display: flex;
-        justify-content: space-between;
+         justify-content: space-between;
         align-items: center;
         z-index: 100;
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      }
+       }
 
       .menu-controls {
           display: flex;
-          align-items: center;
+           align-items: center;
       }
 
       .menu-item, #langToggleBtn {
         position: relative;
-        color: white;
+         color: white;
         padding: 8px 15px;
         margin-left: 10px;
         cursor: pointer;
         font-family: "Poppins", "Cairo", sans-serif;
         border-radius: 4px;
-        transition: background 0.3s ease, color 0.3s ease;
+         transition: background 0.3s ease, color 0.3s ease;
         font-size: 14px;
         user-select: none;
-      }
+       }
 
       .menu-item:hover, #langToggleBtn:hover {
         background: rgba(255, 255, 255, 0.2);
-        color: #eee;
+         color: #eee;
       }
 
+      /* UPDATED DROPDOWN STYLE */
       .dropdown {
         position: absolute;
         top: 100%;
-        right: 0;
+        /* REMOVED right: 0; - will be handled by LTR/RTL rules below */
         background: rgba(25, 25, 25, 0.95);
         min-width: 180px;
-        border-radius: 0 0 6px 6px;
+        /* CHANGED border-radius to apply to all corners */
+        border-radius: 6px;
         overflow: hidden;
         display: none;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-top: none;
+        /* REMOVED border-top: none; */
         z-index: 110;
       }
 
+       /* ADDED LTR/RTL positioning rules */
+       /* Default LTR positioning for the dropdown */
+       body[dir="ltr"] .menu-item .dropdown {
+           right: 0;
+           left: auto;
+           /* Optional: If you want sharp top corners touching the menu item in LTR */
+           /* border-top-left-radius: 0; */
+           /* border-top-right-radius: 0; */
+       }
+
+       /* Added RTL positioning for the dropdown */
+       body[dir="rtl"] .menu-item .dropdown {
+           right: auto; /* Override default */
+           left: 0;    /* Position from left */
+           /* Optional: If you want sharp top corners touching the menu item in RTL */
+           /* border-top-left-radius: 0; */
+           /* border-top-right-radius: 0; */
+       }
+
       .dropdown.show {
         display: block;
-      }
+       }
 
       .dropdown-item {
         padding: 12px 20px;
         color: #e0e0e0;
-        text-decoration: none;
+         text-decoration: none;
         display: block;
         transition: background 0.2s ease, color 0.2s ease;
         font-size: 14px;
         white-space: nowrap;
-      }
+       }
 
       .dropdown-item:hover {
         background: rgba(255, 255, 255, 0.15);
-        color: white;
+         color: white;
       }
 
       #title {
         color: white;
-        font-family: "Poppins", sans-serif;
+         font-family: "Poppins", sans-serif;
         font-size: 22px;
         font-weight: 600;
       }
@@ -239,27 +270,29 @@
        /* Language Direction Adjustments */
        body[dir="rtl"] #infoPanel {
             left: auto;
-            right: 20px;
+             right: 20px;
             text-align: right;
        }
        body[dir="ltr"] #infoPanel {
             left: 20px;
-            right: auto;
+             right: auto;
             text-align: left;
        }
        body[dir="rtl"] #closeBtn {
             left: 10px;
-            right: auto;
+             right: auto;
        }
        body[dir="ltr"] #closeBtn {
             left: auto;
-            right: 10px;
+             right: 10px;
        }
         body[dir="rtl"] #readMoreBtn {
-            margin-right: auto; /* Align button left in RTL */
+            margin-right: auto;
+ /* Align button left in RTL */
         }
         body[dir="ltr"] #readMoreBtn {
-            margin-left: auto; /* Align button right in LTR */
+            margin-left: auto;
+ /* Align button right in LTR */
         }
 
 
